@@ -1,0 +1,2911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SBSD Air Medic Team Portal</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap');
+
+  :root {
+    --gold: #C8A84B;
+    --gold-light: #E2C97A;
+    --navy: #0D1B2A;
+    --navy-mid: #162436;
+    --navy-light: #1E3148;
+    --red: #C0392B;
+    --red-light: #E74C3C;
+    --white: #F5F5F0;
+    --gray: #8A9BB0;
+    --gray-light: #BDC9D8;
+    --border: rgba(200,168,75,0.25);
+    --success: #2ECC71;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    border-bottom: 2px solid var(--gold);
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 0;
+  }
+  .badge {
+    width: 52px;
+    height: 52px;
+    background: var(--gold);
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .badge span { font-size: 18px; }
+  .header-title h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .header-title p {
+    font-size: 0.75rem;
+    color: var(--gray-light);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .nav-tabs {
+    margin-left: auto;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .nav-tab {
+    background: none;
+    border: 1px solid transparent;
+    color: var(--gray);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav-tab:hover { color: var(--gold-light); border-color: var(--border); }
+  .nav-tab.active {
+    background: var(--gold);
+    color: var(--navy);
+    border-color: var(--gold);
+  }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  /* SECTION CARDS */
+  .card {
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* FORMS */
+  .form-grid { display: grid; gap: 14px; }
+  .form-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  @media(max-width: 600px) {
+    .form-grid.cols-2, .form-grid.cols-3 { grid-template-columns: 1fr; }
+    .nav-tab { font-size: 0.75rem; padding: 6px 10px; }
+    .header-title h1 { font-size: 1.1rem; }
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background: var(--navy);
+    border: 1px solid rgba(138,155,176,0.3);
+    border-radius: 4px;
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.95rem;
+    padding: 9px 12px;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+  .form-group select option { background: var(--navy); }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+
+  /* HOURS GRID */
+  .hours-section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    margin-top: 6px;
+  }
+  .hours-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .hour-input {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .hour-input label {
+    font-size: 0.68rem;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-weight: 600;
+  }
+  .hour-input input {
+    background: var(--navy);
+    border: 1px solid rgba(138,155,176,0.3);
+    border-radius: 4px;
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-size: 1rem;
+    padding: 8px 10px;
+    text-align: center;
+    width: 100%;
+    transition: border-color 0.2s;
+  }
+  .hour-input input:focus { outline: none; border-color: var(--gold); }
+
+  /* MISSION TYPE TOGGLE */
+  .mission-toggle {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .mission-type-btn {
+    background: var(--navy);
+    border: 1px solid rgba(138,155,176,0.3);
+    border-radius: 4px;
+    color: var(--gray);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .mission-type-btn.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--navy);
+  }
+
+  /* BUTTONS */
+  .btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--navy);
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .btn-danger {
+    background: var(--red);
+    color: white;
+  }
+  .btn-danger:hover { background: var(--red-light); }
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--gold);
+  }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-sm { font-size: 0.8rem; padding: 6px 14px; }
+
+  /* SUCCESS TOAST */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--success);
+    color: white;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 14px 28px;
+    border-radius: 6px;
+    z-index: 9999;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* MISSION RECORDS TABLE */
+  .mission-list { margin-top: 8px; }
+  .mission-item {
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .mission-item-info h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    margin-bottom: 4px;
+  }
+  .mission-item-info p {
+    font-size: 0.82rem;
+    color: var(--gray-light);
+    line-height: 1.4;
+  }
+  .mission-tag {
+    display: inline-block;
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    color: var(--gold);
+    font-size: 0.7rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin: 2px 2px 0 0;
+  }
+
+  /* SECRETARY PANEL */
+  .password-gate {
+    max-width: 400px;
+    margin: 60px auto;
+    text-align: center;
+  }
+  .password-gate h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .password-gate p {
+    color: var(--gray);
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+  }
+  .password-gate input {
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-size: 1rem;
+    padding: 12px 16px;
+    width: 100%;
+    margin-bottom: 12px;
+    text-align: center;
+    letter-spacing: 0.2em;
+  }
+  .password-gate input:focus { outline: none; border-color: var(--gold); }
+  .pw-error { color: var(--red-light); font-size: 0.85rem; margin-top: 8px; display: none; }
+
+  /* ROSTER TABLE */
+  .roster-table { width: 100%; border-collapse: collapse; }
+  .roster-table th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .roster-table td {
+    font-size: 0.9rem;
+    padding: 9px 10px;
+    border-bottom: 1px solid rgba(138,155,176,0.1);
+    color: var(--white);
+    vertical-align: middle;
+  }
+  .roster-table tr:hover td { background: rgba(255,255,255,0.03); }
+  .status-badge {
+    font-size: 0.7rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 2px 8px;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+  .status-active { background: rgba(46,204,113,0.15); color: #2ECC71; border: 1px solid rgba(46,204,113,0.3); }
+  .status-trainee { background: rgba(241,196,15,0.15); color: #F1C40F; border: 1px solid rgba(241,196,15,0.3); }
+  .status-loa { background: rgba(192,57,43,0.15); color: #E74C3C; border: 1px solid rgba(192,57,43,0.3); }
+  .status-support { background: rgba(52,152,219,0.15); color: #3498DB; border: 1px solid rgba(52,152,219,0.3); }
+
+  /* MONTHLY REPORT */
+  .report-header-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .report-header-bar select, .report-header-bar input {
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.95rem;
+    padding: 9px 14px;
+  }
+  .report-header-bar select:focus, .report-header-bar input:focus { outline: none; border-color: var(--gold); }
+
+  /* HOME PAGE */
+  .home-hero {
+    background: linear-gradient(135deg, var(--navy-light) 0%, var(--navy) 100%);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 36px 28px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .home-hero h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+  .home-hero p { color: var(--gray-light); font-size: 0.95rem; line-height: 1.6; max-width: 500px; margin: 0 auto 24px; }
+  .quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+  }
+  .quick-card {
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .quick-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(200,168,75,0.15);
+  }
+  .quick-card .icon { font-size: 2rem; margin-bottom: 10px; }
+  .quick-card h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .quick-card p { font-size: 0.8rem; color: var(--gray); }
+
+  /* MISSION SECTION TOGGLE */
+  .mission-section { display: none; }
+  .mission-section.active { display: block; }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
+  }
+
+  /* ADD MEMBER FORM */
+  .inline-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    margin-top: 16px;
+  }
+  .inline-form .form-group { flex: 1; min-width: 140px; }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-card .num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-card .lbl {
+    font-size: 0.7rem;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .checkbox-group { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+  .checkbox-group input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--gold); }
+  .checkbox-group label { font-size: 0.9rem; color: var(--white); text-transform: none; letter-spacing: 0; font-weight: 400; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .modal h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+  }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+  /* YEAR FLAG WARNING */
+  .year-flag {
+    background: rgba(241,196,15,0.12);
+    border: 1px solid rgba(241,196,15,0.5);
+    border-radius: 4px;
+    color: #F1C40F;
+    font-size: 0.78rem;
+    padding: 5px 10px;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* PUBLIC HOURS VIEW */
+  .hours-view-item {
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .hours-view-item h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .hours-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 4px 12px;
+    margin-top: 8px;
+  }
+  .hours-detail-item {
+    font-size: 0.78rem;
+    color: var(--gray-light);
+  }
+  .hours-detail-item span {
+    color: var(--white);
+    font-weight: 600;
+  }
+  .filter-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+  .filter-bar select, .filter-bar input {
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.9rem;
+    padding: 7px 12px;
+  }
+  .filter-bar select:focus, .filter-bar input:focus { outline: none; border-color: var(--gold); }
+
+  /* MISSION DEBRIEF CARDS */
+  .debrief-card {
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    border-left: 4px solid var(--gold);
+  }
+  .debrief-card.type-rescue { border-left-color: #E74C3C; }
+  .debrief-card.type-medical { border-left-color: #3498DB; }
+  .debrief-card.type-sar { border-left-color: #2ECC71; }
+  .debrief-card.type-standby { border-left-color: var(--gray); }
+  .debrief-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .debrief-datetime {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--gold-light);
+    line-height: 1;
+  }
+  .debrief-dispatch {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gray-light);
+    margin-top: 3px;
+  }
+  .debrief-type-badge {
+    margin-left: auto;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    align-self: flex-start;
+  }
+  .debrief-type-badge.rescue { background: rgba(231,76,60,0.2); color: #E74C3C; border: 1px solid rgba(231,76,60,0.4); }
+  .debrief-type-badge.medical { background: rgba(52,152,219,0.2); color: #3498DB; border: 1px solid rgba(52,152,219,0.4); }
+  .debrief-type-badge.sar { background: rgba(46,204,113,0.2); color: #2ECC71; border: 1px solid rgba(46,204,113,0.4); }
+  .debrief-type-badge.standby { background: rgba(138,155,176,0.15); color: var(--gray); border: 1px solid rgba(138,155,176,0.3); }
+  .debrief-row {
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+    margin-bottom: 5px;
+    font-size: 0.88rem;
+    line-height: 1.4;
+  }
+  .debrief-label {
+    color: var(--gray);
+    font-size: 0.73rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    min-width: 80px;
+  }
+  .debrief-value { color: var(--white); }
+  .debrief-description {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(138,155,176,0.15);
+    font-size: 0.88rem;
+    color: var(--gray-light);
+    line-height: 1.55;
+  }
+  .month-tab-btn {
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--gray);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 6px 13px;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .month-tab-btn:hover { color: var(--gold-light); border-color: var(--gold); }
+  .month-tab-btn.active { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+
+  /* CUSTOM TOAST NOTIFICATION */
+  #app-toast {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    background: var(--navy-light);
+    border: 2px solid var(--gold);
+    border-radius: 10px;
+    padding: 22px 28px;
+    min-width: 280px;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  }
+  #app-toast.show { display: block; }
+  #app-toast p {
+    font-family: 'Barlow', sans-serif;
+    font-size: 1rem;
+    color: var(--white);
+    margin-bottom: 16px;
+    line-height: 1.4;
+    white-space: pre-line;
+  }
+  #app-toast button {
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    border-radius: 6px;
+    padding: 8px 28px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+  }
+  #app-toast button:hover { background: var(--gold-light); }
+  #toast-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 9998;
+  }
+  #toast-overlay.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- Custom alert modal (replaces browser alert) -->
+<div id="toast-overlay" onclick="closeToast()"></div>
+<div id="app-toast">
+  <p id="app-toast-msg"></p>
+  <button onclick="closeToast()">OK</button>
+</div>
+
+<script>
+function showAlert(msg) {
+  document.getElementById('app-toast-msg').textContent = msg;
+  document.getElementById('app-toast').classList.add('show');
+  document.getElementById('toast-overlay').classList.add('show');
+}
+function closeToast() {
+  document.getElementById('app-toast').classList.remove('show');
+  document.getElementById('toast-overlay').classList.remove('show');
+}
+</script>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="badge"><span>✈</span></div>
+    <div class="header-title">
+      <h1>SBSD Air Medics</h1>
+      <p>Team Portal</p>
+    </div>
+    <nav class="nav-tabs">
+      <button class="nav-tab active" onclick="showPage('home')">Home</button>
+      <button class="nav-tab" onclick="showPage('shift')">Log Shift / Activity</button>
+      <button class="nav-tab" onclick="showPage('hours')">Submit Hours</button>
+      <button class="nav-tab" onclick="showPage('viewhours')">View Hours</button>
+      <button class="nav-tab" onclick="showPage('shiftlog')">View Shift Log</button>
+      <button class="nav-tab" onclick="showPage('missions')">View Missions</button>
+      <button class="nav-tab" onclick="showPage('secretary')">Secretary</button>
+    </nav>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- EDIT MEMBER MODAL -->
+<div class="modal-overlay" id="modal-edit-member">
+  <div class="modal">
+    <h3>✏️ Edit Member</h3>
+    <input type="hidden" id="edit-member-idx">
+    <div class="form-grid" style="gap:14px">
+      <div class="form-group"><label>Name</label><input type="text" id="edit-member-name"></div>
+      <div class="form-group"><label>Certification</label>
+        <select id="edit-member-cert">
+          <option>EMT</option><option>AEMT</option><option>Paramedic</option>
+          <option>RN</option><option>Physician</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Status</label>
+        <select id="edit-member-status">
+          <option value="active">Active</option><option value="trainee">Trainee</option>
+          <option value="loa">LOA</option><option value="support">Support</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-edit-member')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="saveEditMember()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT HOURS MODAL -->
+<div class="modal-overlay" id="modal-edit-hours">
+  <div class="modal" style="max-width:600px;max-height:90vh;overflow-y:auto">
+    <h3>✏️ Edit Hours Submission</h3>
+    <input type="hidden" id="edit-hours-id">
+    <div class="form-grid cols-2" style="margin-bottom:14px">
+      <div class="form-group"><label>Name</label><select id="edit-h-name"></select></div>
+      <div class="form-group"><label>Date</label><input type="date" id="edit-h-date"></div>
+    </div>
+    <div class="form-grid cols-2" style="margin-bottom:14px">
+      <div class="hour-input"><label>POV Miles</label><input type="number" min="0" id="edit-h-miles" value="0"></div>
+      <div class="form-group"><label>Notes</label><input type="text" id="edit-h-notes"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:14px">
+      <div class="hour-input"><label>Rescue Standby</label><input type="number" min="0" id="edit-h-rescue-standby" value="0"></div>
+      <div class="hour-input"><label>Rescue Ops</label><input type="number" min="0" id="edit-h-rescue-ops" value="0"></div>
+      <div class="hour-input"><label>Unit Meeting</label><input type="number" min="0" id="edit-h-meeting" value="0"></div>
+      <div class="hour-input"><label>Team Training</label><input type="number" min="0" id="edit-h-team-training" value="0"></div>
+      <div class="hour-input"><label>Hoist Currency</label><input type="number" min="0" id="edit-h-hoist" value="0"></div>
+      <div class="hour-input"><label>Other Training</label><input type="number" min="0" id="edit-h-other-training" value="0"></div>
+      <div class="hour-input"><label>Inter-Unit Support</label><input type="number" min="0" id="edit-h-inter-unit" value="0"></div>
+      <div class="hour-input"><label>Admin</label><input type="number" min="0" id="edit-h-admin" value="0"></div>
+      <div class="hour-input"><label>Equipment</label><input type="number" min="0" id="edit-h-equipment" value="0"></div>
+      <div class="hour-input"><label>Fitness</label><input type="number" min="0" id="edit-h-fitness" value="0"></div>
+      <div class="hour-input"><label>Fund Raising/PR</label><input type="number" min="0" id="edit-h-fundraising" value="0"></div>
+      <div class="hour-input"><label>Range</label><input type="number" min="0" id="edit-h-range" value="0"></div>
+      <div class="hour-input"><label>Other Hours</label><input type="number" min="0" id="edit-h-other" value="0"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-edit-hours')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="saveEditHours()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT SHIFT MODAL -->
+<div class="modal-overlay" id="modal-edit-shift">
+  <div class="modal" style="max-width:600px;max-height:90vh;overflow-y:auto">
+    <h3>✏️ Edit Shift Submission</h3>
+    <input type="hidden" id="edit-shift-id">
+    <div class="form-grid cols-2" style="margin-bottom:14px">
+      <div class="form-group"><label>Date</label><input type="date" id="edit-s-date"></div>
+      <div class="form-group"><label>Vehicle</label>
+        <select id="edit-s-vehicle">
+          <option value="">-- Select Vehicle --</option>
+          <option>Air Rescue 306</option><option>Air Rescue 308</option>
+          <option>40 King 5</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Pilot</label><input type="text" id="edit-s-pilot"></div>
+      <div class="form-group"><label>Crew Chief</label><input type="text" id="edit-s-crewchief"></div>
+      <div class="form-group"><label>Air Medic 1</label><input type="text" id="edit-s-am1"></div>
+      <div class="form-group"><label>Air Medic 2</label><input type="text" id="edit-s-am2"></div>
+      <div class="form-group"><label>Air Medic 3</label><input type="text" id="edit-s-am3"></div>
+      <div class="form-group"><label>Other Medic</label><input type="text" id="edit-s-other-medic"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px">
+      <div class="checkbox-group">
+        <input type="checkbox" id="edit-s-has-mission">
+        <label for="edit-s-has-mission">Shift included a mission or activity</label>
+      </div>
+    </div>
+    <div class="form-grid cols-2" style="margin-bottom:14px">
+      <div class="form-group"><label>Mission Type</label>
+        <select id="edit-s-mission-type">
+          <option value="">-- None --</option>
+          <option>Rescue</option>
+          <option>Scene Call</option>
+          <option>Inter-facility (IFT)</option>
+          <option>Special Event Standby</option>
+          <option>Other Mission</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Incident Number</label><input type="text" id="edit-s-incident"></div>
+      <div class="form-group"><label>Dispatch Time</label><input type="time" id="edit-s-dispatch-time"></div>
+      <div class="form-group"><label>General Location</label><input type="text" id="edit-s-location"></div>
+      <div class="form-group"><label>Disposition</label><input type="text" id="edit-s-disposition"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Brief Description</label>
+      <textarea id="edit-s-description"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-edit-shift')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="saveEditShift()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="container">
+    <div class="home-hero">
+      <h2>Welcome, Air Medic</h2>
+      <p>San Bernardino County Sheriff's Department Air Medic Team portal. Submit your shift logs, mission reports, and monthly volunteer hours here.</p>
+    </div>
+    <div class="quick-actions">
+      <div class="quick-card" onclick="showPage('shift')">
+        <div class="icon">🚁</div>
+        <h3>Log Shift / Activity</h3>
+        <p>Record your duty shift and any missions</p>
+      </div>
+      <div class="quick-card" onclick="showPage('hours')">
+        <div class="icon">📋</div>
+        <h3>Submit Hours</h3>
+        <p>Submit your daily volunteer hours</p>
+      </div>
+      <div class="quick-card" onclick="showPage('viewhours')">
+        <div class="icon">📊</div>
+        <h3>View Hours</h3>
+        <p>View all submissions &amp; monthly reports</p>
+      </div>
+      <div class="quick-card" onclick="showPage('shiftlog')">
+        <div class="icon">📅</div>
+        <h3>View Shift Log</h3>
+        <p>Browse all logged shifts and activity</p>
+      </div>
+      <div class="quick-card" onclick="showPage('missions')">
+        <div class="icon">📁</div>
+        <h3>View Missions</h3>
+        <p>View all rescue and medical missions</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SHIFT LOG ==================== -->
+<div class="page" id="page-shift">
+  <div class="container">
+
+    <div class="card">
+      <div class="card-title">🚁 Log Shift / Activity</div>
+      <div class="form-grid cols-2">
+        <div class="form-group">
+          <label>Date of Shift</label>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input type="date" id="shift-date" style="flex:1">
+            <button type="button" onclick="document.getElementById('shift-date').showPicker()" style="background:var(--navy-light);border:1px solid var(--border);border-radius:4px;color:var(--gold);font-size:1.1rem;padding:7px 10px;cursor:pointer" title="Open calendar">📅</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Vehicle</label>
+          <select id="shift-vehicle">
+            <option value="">-- Select Vehicle --</option>
+            <option>Air Rescue 306</option>
+            <option>Air Rescue 308</option>
+            <option>40 King 5</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-grid cols-2" style="margin-top:14px">
+        <div class="form-group">
+          <label>Pilot</label>
+          <select id="shift-pilot"><option value="">-- Select Pilot --</option></select>
+        </div>
+        <div class="form-group">
+          <label>Crew Chief / Flight Officer</label>
+          <select id="shift-crew-chief"><option value="">-- Select Crew Chief --</option></select>
+        </div>
+        <div class="form-group">
+          <label>Air Medic 1</label>
+          <select id="shift-am1"><option value="">-- Select --</option></select>
+        </div>
+        <div class="form-group">
+          <label>Air Medic 2</label>
+          <select id="shift-am2"><option value="">-- Select --</option></select>
+        </div>
+        <div class="form-group">
+          <label>Air Medic 3</label>
+          <select id="shift-am3"><option value="">-- Select --</option></select>
+        </div>
+        <div class="form-group">
+          <label>Other Medic (SBCoFD/SED/Other)</label>
+          <input type="text" id="shift-other-medic" placeholder="Name (optional)">
+        </div>
+      </div>
+    </div>
+
+    <!-- MISSION SECTION -->
+    <div class="card">
+      <div class="card-title">📡 Mission / Activity</div>
+
+      <div class="form-group" style="margin-bottom:16px">
+        <div class="checkbox-group">
+          <input type="checkbox" id="has-mission" onchange="toggleMissionSection()">
+          <label for="has-mission">This shift included a mission or activity to log</label>
+        </div>
+      </div>
+
+      <div id="mission-details" style="display:none">
+        <div style="background:rgba(192,57,43,0.15);border:2px solid var(--red);border-radius:6px;padding:14px 18px;margin-bottom:18px;text-align:center;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:800;color:#E74C3C;letter-spacing:0.08em;text-transform:uppercase;">⚠ NO PATIENT IDENTIFIERS</span>
+          <p style="font-size:0.82rem;color:var(--gray-light);margin-top:4px;">Do not enter any name, date of birth, address, or other identifying patient information.</p>
+        </div>
+        <div class="form-group" style="margin-bottom:14px">
+          <label>Type of Mission</label>
+          <div class="mission-toggle" id="mission-type-toggle">
+            <button class="mission-type-btn" onclick="selectMissionType('Rescue', this)">Rescue</button>
+            <button class="mission-type-btn" onclick="selectMissionType('Scene Call', this)">Scene Call</button>
+            <button class="mission-type-btn" onclick="selectMissionType('Inter-facility (IFT)', this)">Inter-facility (IFT)</button>
+            <button class="mission-type-btn" onclick="selectMissionType('Special Event Standby', this)">Special Event Standby</button>
+            <button class="mission-type-btn" onclick="selectMissionType('Other Mission', this)">Other Mission</button>
+          </div>
+        </div>
+
+        <div class="form-grid cols-2" style="margin-bottom:14px">
+          <div class="form-group">
+            <label>Incident Number</label>
+            <input type="text" id="mission-incident" placeholder="e.g. 26-007921">
+          </div>
+          <div class="form-group">
+            <label>Dispatch Time</label>
+            <input type="time" id="mission-dispatch-time" placeholder="HH:MM">
+          </div>
+        </div>
+
+        <!-- RESCUE FIELDS -->
+        <div class="mission-section" id="section-rescue">
+          <div class="form-grid cols-2">
+            <div class="form-group">
+              <label>Type of Rescue</label>
+              <select id="rescue-type">
+                <option value="">-- Select --</option>
+                <option>Hoist</option>
+                <option>Off-Site Landing</option>
+                <option>Hover Step</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Disposition</label>
+              <select id="rescue-disposition">
+                <option value="">-- Select --</option>
+                <option>Patient Treated and Transported by Air Rescue</option>
+                <option>Patient Treated and Care Transferred to other EMS provider</option>
+                <option>Public Assist Only (Non-Medical Rescue)</option>
+                <option>Cancelled</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>General Location</label>
+              <input type="text" id="rescue-location" placeholder="e.g. Lytle Creek">
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:10px">
+            <label>Brief Description</label>
+            <textarea id="rescue-description" placeholder="Describe the rescue..."></textarea>
+          </div>
+        </div>
+
+        <!-- SCENE CALL FIELDS -->
+        <div class="mission-section" id="section-medical">
+          <div class="form-grid cols-2">
+            <div class="form-group">
+              <label>Scene Call Subtype</label>
+              <select id="medical-type">
+                <option value="">-- Select --</option>
+                <option>Designated LZ</option>
+                <option>Off-Site Landing</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Disposition</label>
+              <select id="medical-disposition">
+                <option value="">-- Select --</option>
+                <option>Patient Treated and Transported by Air Rescue</option>
+                <option>Patient Treated and Care Transferred to other EMS provider</option>
+                <option>Patient Deceased</option>
+                <option>Cancelled</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>General Location</label>
+              <input type="text" id="medical-location" placeholder="e.g. Big Bear Airport">
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:10px">
+            <label>Brief Description</label>
+            <textarea id="medical-description" placeholder="Describe the call..."></textarea>
+          </div>
+        </div>
+
+        <!-- INTER-FACILITY TRANSPORT FIELDS -->
+        <div class="mission-section" id="section-interfacility">
+          <div class="form-grid cols-2">
+            <div class="form-group">
+              <label>Disposition</label>
+              <select id="interfacility-disposition">
+                <option value="">-- Select --</option>
+                <option>Patient Treated and Transported by Air Rescue</option>
+                <option>Patient Treated and Care Transferred to other EMS provider</option>
+                <option>Cancelled</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Hospital</label>
+              <input type="text" id="interfacility-location" placeholder="e.g. Loma Linda University Medical Center">
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:10px">
+            <label>Brief Description</label>
+            <textarea id="interfacility-description" placeholder="Describe the transport..."></textarea>
+          </div>
+        </div>
+
+        <!-- SPECIAL EVENT STANDBY FIELDS -->
+        <div class="mission-section" id="section-other">
+          <div class="form-grid cols-2">
+            <div class="form-group">
+              <label>Disposition</label>
+              <select id="other-disposition">
+                <option value="">-- Select --</option>
+                <option>Patient Treated and Transported by Air Rescue</option>
+                <option>Standby Only (No patient contact)</option>
+                <option>Cancelled</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Event Location</label>
+              <input type="text" id="other-location">
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:10px">
+            <label>Brief Description</label>
+            <textarea id="other-description"></textarea>
+          </div>
+        </div>
+
+        <!-- OTHER MISSION FIELDS -->
+        <div class="mission-section" id="section-othermission">
+          <div class="form-grid cols-2">
+            <div class="form-group">
+              <label>Mission Subtype</label>
+              <select id="othermission-type">
+                <option value="">-- Select --</option>
+                <option>Firefighting</option>
+                <option>SED/SWAT</option>
+                <option>Other Law Enforcement</option>
+                <option>Ground S&amp;R</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Disposition</label>
+              <select id="othermission-disposition">
+                <option value="">-- Select --</option>
+                <option>Patient Treated and Transported by Air Rescue</option>
+                <option>Patient Treated and Care Transferred to other EMS provider</option>
+                <option>Patient Deceased</option>
+                <option>Standby Only (No Patient Contact)</option>
+                <option>Cancelled</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>General Location</label>
+              <input type="text" id="othermission-location">
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:10px">
+            <label>Brief Description</label>
+            <textarea id="othermission-description"></textarea>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end;">
+      <button class="btn btn-primary" onclick="submitShift()">Submit Shift Log</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== HOURS ==================== -->
+<div class="page" id="page-hours">
+  <div class="container">
+
+    <!-- SUB-TABS removed: View Hours is now its own top-level page -->
+
+    <!-- SUBMIT HOURS PANEL -->
+    <div id="hpanel-submit">
+    <div class="card">
+      <div class="card-title">📋 Daily Volunteer Hours Entry</div>
+
+      <div class="form-grid cols-2" style="margin-bottom:16px">
+        <div class="form-group">
+          <label>Your Name</label>
+          <select id="hours-name"><option value="">-- Select Your Name --</option></select>
+        </div>
+        <div class="form-group">
+          <label>Date of Entry</label>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input type="date" id="hours-date" style="flex:1">
+            <button type="button" onclick="document.getElementById('hours-date').showPicker()" style="background:var(--navy-light);border:1px solid var(--border);border-radius:4px;color:var(--gold);font-size:1.1rem;padding:7px 10px;cursor:pointer" title="Open calendar">📅</button>
+          </div>
+          <div id="hours-date-flag" style="display:none"></div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="form-grid cols-2" style="margin-bottom:16px">
+        <div class="hour-input">
+          <label>POV Miles</label>
+          <input type="number" min="0" id="h-miles" placeholder="0">
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="hours-grid">
+        <div class="hour-input"><label>Rescue Standby</label><input type="number" min="0" id="h-rescue-standby" placeholder="0"></div>
+        <div class="hour-input"><label>Rescue Ops</label><input type="number" min="0" id="h-rescue-ops" placeholder="0"></div>
+        <div class="hour-input"><label>Unit Meeting</label><input type="number" min="0" id="h-meeting" placeholder="0"></div>
+        <div class="hour-input"><label>Team Training</label><input type="number" min="0" id="h-team-training" placeholder="0"></div>
+        <div class="hour-input"><label>Hoist Currency</label><input type="number" min="0" id="h-hoist" placeholder="0"></div>
+        <div class="hour-input" style="grid-column:span 1">
+          <label>Other Training (specify)</label>
+          <div style="display:flex;gap:6px">
+            <input type="number" min="0" id="h-other-training" placeholder="0" style="width:70px;flex-shrink:0">
+            <input type="text" id="h-other-training-note" placeholder="What training?" style="flex:1;font-size:.85rem">
+          </div>
+        </div>
+        <div class="hour-input"><label>Inter-Unit Support</label><input type="number" min="0" id="h-inter-unit" placeholder="0"></div>
+        <div class="hour-input"><label>Admin</label><input type="number" min="0" id="h-admin" placeholder="0"></div>
+        <div class="hour-input"><label>Equipment</label><input type="number" min="0" id="h-equipment" placeholder="0"></div>
+        <div class="hour-input"><label>Fitness</label><input type="number" min="0" id="h-fitness" placeholder="0"></div>
+        <div class="hour-input"><label>Fund Raising / PR</label><input type="number" min="0" id="h-fundraising" placeholder="0"></div>
+        <div class="hour-input"><label>Range</label><input type="number" min="0" id="h-range" placeholder="0"></div>
+        <div class="hour-input" style="grid-column:span 1">
+          <label>Other Hours (specify)</label>
+          <div style="display:flex;gap:6px">
+            <input type="number" min="0" id="h-other" placeholder="0" style="width:70px;flex-shrink:0">
+            <input type="text" id="h-other-note" placeholder="Description..." style="flex:1;font-size:.85rem">
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px; padding:14px; background:var(--navy); border:1px solid var(--border); border-radius:6px; display:flex; gap:24px; flex-wrap:wrap;">
+        <div><span style="font-size:0.75rem;color:var(--gray);text-transform:uppercase;letter-spacing:.08em;">Total Hours</span><br><span id="total-all" style="font-family:'Barlow Condensed';font-size:1.8rem;font-weight:800;color:var(--gold-light);">0</span></div>
+      </div>
+
+    </div>
+    <div style="display:flex; justify-content:flex-end; margin-top:16px;">
+      <button class="btn btn-primary" onclick="submitHours()">Submit Hours</button>
+    </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== VIEW HOURS ==================== -->
+<div class="page" id="page-viewhours">
+  <div class="container">
+
+    <!-- SUB-TABS -->
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+      <button class="nav-tab active" id="vhtab-entries" onclick="showViewHoursTab('entries')">Daily Entries</button>
+    </div>
+
+    <!-- DAILY ENTRIES PANEL -->
+    <div id="vhpanel-entries">
+      <div class="card">
+        <div class="card-title">📋 All Hours Submissions</div>
+        <div class="filter-bar">
+          <select id="view-filter-name"><option value="">All Members</option></select>
+          <input type="month" id="view-filter-month" placeholder="Filter by month">
+          <button class="btn btn-secondary btn-sm" onclick="renderPublicHours()">Filter</button>
+          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('view-filter-name').value='';document.getElementById('view-filter-month').value='';renderPublicHours()">Clear</button>
+        </div>
+        <div id="public-hours-list"><p style="color:var(--gray);font-size:.9rem">No submissions yet.</p></div>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+<!-- ==================== VIEW SHIFT LOG ==================== -->
+<div class="page" id="page-shiftlog">
+  <div class="container">
+    <div class="card">
+      <div class="card-title">📅 Shift Log</div>
+      <div class="filter-bar">
+        <select id="shiftlog-filter-name"><option value="">All Members</option></select>
+        <input type="month" id="shiftlog-filter-month" placeholder="Filter by month">
+        <button class="btn btn-secondary btn-sm" onclick="renderShiftLog()">Filter</button>
+        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('shiftlog-filter-name').value='';document.getElementById('shiftlog-filter-month').value='';renderShiftLog()">Clear</button>
+      </div>
+      <div id="shiftlog-stats" class="stats-bar" style="margin-bottom:16px"></div>
+      <div id="shiftlog-list"><p style="color:var(--gray);font-size:.9rem">No shifts logged yet.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MISSIONS VIEW ==================== -->
+<div class="page" id="page-missions">
+  <div class="container">
+    <div class="card">
+      <div class="card-title">📁 Mission Debrief Log</div>
+      <!-- STATS BAR -->
+      <div id="missions-stats" class="stats-bar"></div>
+      <!-- MONTH FILTER TABS -->
+      <div id="missions-month-tabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border)"></div>
+      <!-- MISSION DEBRIEF LIST -->
+      <div id="missions-list"><p style="color:var(--gray);font-size:.9rem">No missions logged yet.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECRETARY ==================== -->
+<div class="page" id="page-secretary">
+  <div class="container">
+
+    <!-- PASSWORD GATE -->
+    <div id="sec-gate" class="password-gate">
+      <div style="font-size:3rem;margin-bottom:16px;">🔒</div>
+      <h2>Secretary Access</h2>
+      <p>Enter the secretary password to continue.</p>
+      <input type="password" id="sec-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPassword()">
+      <button class="btn btn-primary" style="width:100%" onclick="checkPassword()">Unlock</button>
+      <p class="pw-error" id="pw-error">Incorrect password. Try again.</p>
+    </div>
+
+    <!-- SECRETARY DASHBOARD -->
+    <div id="sec-dashboard" style="display:none">
+
+      <!-- GOOGLE SHEETS INTEGRATION -->
+      <div class="card">
+        <div class="card-title">📊 Google Account</div>
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <div>
+            <div style="font-size:.82rem;color:var(--gray);margin-bottom:4px;">Status</div>
+            <div id="google-status" style="font-weight:600;font-size:.95rem;">⚪ Not connected</div>
+          </div>
+          <button id="google-connect-btn" class="btn btn-primary btn-sm" onclick="connectGoogle()">🔗 Connect Google Account</button>
+          <button id="google-disconnect-btn" class="btn btn-secondary btn-sm" onclick="disconnectGoogle()" style="display:none">Disconnect</button>
+        </div>
+        <p style="margin-top:12px;font-size:.8rem;color:var(--gray);line-height:1.6;">Connect your Google account to enable one-click sync of all monthly hours to your pre-formatted Google Sheet. Tab names must match exactly: Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec.</p>
+        <div style="margin-top:14px;display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;">
+          <div class="form-group" style="flex:1;min-width:220px">
+            <label>Google Sheet ID</label>
+            <input type="text" id="hours-sheet-id-input" placeholder="Paste Sheet ID from URL..."
+              style="background:var(--navy);border:1px solid rgba(138,155,176,0.3);border-radius:4px;color:var(--white);font-family:'Barlow',sans-serif;font-size:.9rem;padding:8px 12px;width:100%">
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="saveSheetId()">Save Sheet ID</button>
+        </div>
+        <div id="sheet-id-status" style="margin-top:6px;font-size:.78rem;color:var(--gray)"></div>
+      </div>
+
+      <!-- ROSTER MANAGEMENT -->
+      <div class="card">
+        <div class="card-title">👥 Roster Management</div>
+        <table class="roster-table" id="roster-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Certification</th>
+              <th>Status</th>
+              <th style="width:130px"></th>
+            </tr>
+          </thead>
+          <tbody id="roster-tbody"></tbody>
+        </table>
+
+        <hr class="divider">
+        <div style="font-family:'Barlow Condensed';font-size:.85rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;">Add Member</div>
+        <div class="inline-form">
+          <div class="form-group"><label>Name</label><input type="text" id="new-member-name" placeholder="Full name"></div>
+          <div class="form-group"><label>Certification</label>
+            <select id="new-member-cert">
+              <option>EMT</option>
+              <option>AEMT</option>
+              <option>Paramedic</option>
+              <option>RN</option>
+              <option>Physician</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Status</label>
+            <select id="new-member-status">
+              <option value="active">Active</option>
+              <option value="trainee">Trainee</option>
+              <option value="loa">LOA</option>
+              <option value="support">Support</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="addMember()" style="margin-bottom:0;align-self:flex-end">Add</button>
+        </div>
+      </div>
+
+      <!-- PILOTS & CREW CHIEFS ROSTER -->
+      <div class="card">
+        <div class="card-title">✈️ Pilots & Crew Chiefs</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;flex-wrap:wrap">
+          <div>
+            <div style="font-family:'Barlow Condensed';font-size:.85rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">Pilots</div>
+            <div id="pilots-list" style="margin-bottom:12px"></div>
+            <div style="display:flex;gap:8px">
+              <input type="text" id="new-pilot-name" placeholder="Pilot name" style="flex:1;background:var(--navy);border:1px solid rgba(138,155,176,0.3);border-radius:4px;color:var(--white);font-family:'Barlow',sans-serif;font-size:.9rem;padding:7px 10px">
+              <button class="btn btn-primary btn-sm" onclick="addPilot()">Add</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-family:'Barlow Condensed';font-size:.85rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">Crew Chiefs / Flight Officers</div>
+            <div id="crewchiefs-list" style="margin-bottom:12px"></div>
+            <div style="display:flex;gap:8px">
+              <input type="text" id="new-crewchief-name" placeholder="Crew chief name" style="flex:1;background:var(--navy);border:1px solid rgba(138,155,176,0.3);border-radius:4px;color:var(--white);font-family:'Barlow',sans-serif;font-size:.9rem;padding:7px 10px">
+              <button class="btn btn-primary btn-sm" onclick="addCrewChief()">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GOOGLE SHEETS SYNC -->
+      <div class="card">
+        <div class="card-title">⬆ Sync to Google Sheets</div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <div class="form-group" style="margin:0">
+            <label>Year</label>
+            <input type="number" id="report-year" value="" style="width:90px" placeholder="Year">
+          </div>
+          <button id="btn-sync-sheets" class="btn btn-primary" onclick="syncAllMonthsToSheets()" style="margin-top:18px">⬆ Sync All Months to Sheets</button>
+        </div>
+        <p style="margin-top:10px;font-size:.8rem;color:var(--gray);line-height:1.5;">Enter the year and click to sync all 12 months of hours data into your linked Google Sheet.</p>
+      </div>
+
+      <!-- HOURS SUBMISSIONS -->
+      <div class="card">
+        <div class="card-title">📋 Hours Submissions</div>
+        <div id="hours-submissions-list"><p style="color:var(--gray);font-size:.9rem">No submissions yet.</p></div>
+      </div>
+
+      <!-- SHIFT / MISSION DATA -->
+      <div class="card">
+        <div class="card-title">🚁 Shift & Mission Data</div>
+        <div id="shifts-list"><p style="color:var(--gray);font-size:.9rem">No shifts logged yet.</p></div>
+      </div>
+
+      <!-- ADMIN BUTTONS -->
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px">
+        <button class="btn btn-secondary btn-sm" onclick="openLeadershipModal()">🎖️ Update Leadership Positions</button>
+        <button class="btn btn-secondary btn-sm" onclick="openPasswordModal()">🔑 Change Password</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- LEADERSHIP MODAL -->
+<div id="leadership-modal" style="display:none;position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;">
+  <div style="background:var(--navy-light);border:2px solid var(--gold);border-radius:12px;padding:28px 28px 22px;width:90%;max-width:480px;box-shadow:0 8px 32px rgba(0,0,0,0.6);">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">🎖️ Team Leadership Positions</div>
+    <p style="font-size:.82rem;color:var(--gray);margin-bottom:18px;">These names appear on monthly reports. Update annually when positions change.</p>
+    <div class="form-grid cols-2">
+      <div class="form-group">
+        <label>Team Commander</label>
+        <input type="text" id="pos-commander" placeholder="Full name">
+      </div>
+      <div class="form-group">
+        <label>Secretary / Preparer</label>
+        <input type="text" id="pos-secretary" placeholder="Full name">
+      </div>
+      <div class="form-group">
+        <label>Unit Coordinator</label>
+        <input type="text" id="pos-coordinator" placeholder="Full name">
+      </div>
+      <div class="form-group">
+        <label>Assistant Coordinator</label>
+        <input type="text" id="pos-asst-coordinator" placeholder="Full name">
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;">
+      <button class="btn btn-secondary btn-sm" onclick="closeLeadershipModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="saveLeadershipPositions();closeLeadershipModal()">Save Positions</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div id="password-modal" style="display:none;position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;">
+  <div style="background:var(--navy-light);border:2px solid var(--gold);border-radius:12px;padding:28px 28px 22px;width:90%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,0.6);">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:18px;">🔑 Change Password</div>
+    <div class="form-group" style="margin-bottom:14px;">
+      <label>New Password</label>
+      <input type="password" id="new-password" placeholder="New password">
+    </div>
+    <div class="form-group" style="margin-bottom:18px;">
+      <label>Confirm Password</label>
+      <input type="password" id="confirm-password" placeholder="Confirm new password">
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn btn-secondary btn-sm" onclick="closePasswordModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="changePassword()">Update Password</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// ============================================================
+// *** CONFIGURATION — Edit these values as needed ***
+// To connect Google Sheets, follow the setup instructions
+// in the Secretary panel, then paste your Web App URL below.
+// ============================================================
+// ============================================================
+// *** GOOGLE OAUTH CONFIG — Paste your Client ID below ***
+// ============================================================
+const GOOGLE_CLIENT_ID = '380139606689-e0n7eskal940d10hn8plig5uj3fajsmg.apps.googleusercontent.com'; // paste your OAuth Client ID here
+const SHEETS_SCOPE = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file';
+let hoursSheetId = localStorage.getItem('sbsd_hours_sheet_id') || null;
+let googleAccessToken = localStorage.getItem('sbsd_google_token') || null;
+let googleTokenExpiry = parseInt(localStorage.getItem('sbsd_google_expiry') || '0');
+
+function isGoogleConnected() {
+  return googleAccessToken && Date.now() < googleTokenExpiry;
+}
+
+function connectGoogle() {
+  if (!GOOGLE_CLIENT_ID) {
+    showAlert('Please paste your Google OAuth Client ID into the app first.\n\nOpen the HTML file in a text editor, find GOOGLE_CLIENT_ID near the top of the <script> section, and paste your Client ID inside the quotes.');
+    return;
+  }
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: GOOGLE_CLIENT_ID,
+    scope: SHEETS_SCOPE,
+    callback: (resp) => {
+      if (resp.error) { showAlert('Google sign-in failed: ' + resp.error); return; }
+      googleAccessToken = resp.access_token;
+      googleTokenExpiry = Date.now() + (resp.expires_in * 1000);
+      localStorage.setItem('sbsd_google_token', googleAccessToken);
+      localStorage.setItem('sbsd_google_expiry', googleTokenExpiry);
+      updateGoogleStatus();
+      showToast('✅ Google account connected!');
+    }
+  });
+  client.requestAccessToken();
+}
+
+function disconnectGoogle() {
+  if (googleAccessToken) google.accounts.oauth2.revoke(googleAccessToken, () => {});
+  googleAccessToken = null;
+  googleTokenExpiry = 0;
+  localStorage.removeItem('sbsd_google_token');
+  localStorage.removeItem('sbsd_google_expiry');
+  updateGoogleStatus();
+  showToast('Google account disconnected.');
+}
+
+function saveSheetId() {
+  const val = document.getElementById('hours-sheet-id-input')?.value.trim();
+  if (!val) { showAlert('Please paste a Sheet ID first.'); return; }
+  hoursSheetId = val;
+  localStorage.setItem('sbsd_hours_sheet_id', hoursSheetId);
+  const el = document.getElementById('sheet-id-status');
+  if (el) el.textContent = '✅ Sheet ID saved: ' + hoursSheetId;
+  showToast('✅ Sheet ID saved!');
+}
+
+function updateGoogleStatus() {
+  const statusEl = document.getElementById('google-status');
+  const connectBtn = document.getElementById('google-connect-btn');
+  const disconnectBtn = document.getElementById('google-disconnect-btn');
+  if (!statusEl) return;
+  if (isGoogleConnected()) {
+    statusEl.textContent = '✅ Connected';
+    statusEl.style.color = 'var(--success)';
+    if (connectBtn) connectBtn.style.display = 'none';
+    if (disconnectBtn) disconnectBtn.style.display = 'inline-block';
+  } else {
+    statusEl.textContent = '⚪ Not connected';
+    statusEl.style.color = 'var(--gray)';
+    if (connectBtn) connectBtn.style.display = 'inline-block';
+    if (disconnectBtn) disconnectBtn.style.display = 'none';
+  }
+}
+
+// Legacy placeholder (kept for compatibility, not used by new export)
+const GOOGLE_SHEETS_URL = '';
+const SHEETS_ENABLED = false;
+async function sendToSheets() {}
+
+// ============================================================
+// DATA STORAGE
+// ============================================================
+const STORAGE_KEY = 'sbsd_airmedic_v2';
+
+function loadData() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || getDefaultData(); }
+  catch(e) { return getDefaultData(); }
+}
+function saveData(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+
+function getDefaultData() {
+  return {
+    password: 'airmedic2026',
+    roster: [
+      { name: 'Brad Adkins', cert: 'Paramedic', status: 'active' },
+      { name: 'Greg Daye', cert: 'Paramedic', status: 'support' },
+      { name: 'William Downes', cert: 'EMT', status: 'trainee' },
+      { name: 'Allen Francis', cert: 'Paramedic', status: 'active' },
+      { name: 'Jared Gvesrude', cert: 'EMT', status: 'trainee' },
+      { name: 'Wayne Hess', cert: 'Paramedic', status: 'active' },
+      { name: 'Robert Katzer', cert: 'Paramedic', status: 'loa' },
+      { name: 'Meagan Kimball', cert: 'EMT', status: 'trainee' },
+      { name: 'Steve Patterson', cert: 'Paramedic', status: 'active' },
+      { name: 'Peter Peng', cert: 'Paramedic', status: 'active' },
+      { name: 'Ray Ramirez', cert: 'Paramedic', status: 'support' },
+      { name: 'Chris Williams', cert: 'Paramedic', status: 'active' },
+      { name: 'Gordon Yee', cert: 'Paramedic', status: 'active' },
+    ],
+    shifts: [],
+    hoursSubmissions: [],
+    pilots: ['TBD'],
+    crewChiefs: ['TBD'],
+    leadership: {
+      commander: 'Allen Francis',
+      secretary: 'Peter Peng',
+      coordinator: 'Lauren Abernathy',
+      asstCoordinator: 'Kevin Connors'
+    }
+  };
+}
+
+let appData = loadData();
+let secUnlocked = false;
+
+
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t => {
+    if(t.getAttribute('onclick') && t.getAttribute('onclick').includes("'" + name + "'")) t.classList.add('active');
+  });
+  if(name === 'missions') renderMissions();
+  if(name === 'shift') populateRosterSelects();
+  if(name === 'hours') populateHoursSelect();
+  if(name === 'viewhours') { populateViewFilter(); renderPublicHours(); }
+  if(name === 'shiftlog') { populateShiftLogFilter(); renderShiftLog(); }
+  if(name === 'secretary' && secUnlocked) renderSecretaryDashboard();
+}
+
+
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ============================================================
+// MODALS
+// ============================================================
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ============================================================
+// ROSTER SELECTS
+// ============================================================
+function populateRosterSelects() {
+  ['shift-am1','shift-am2','shift-am3'].forEach(id => {
+    const sel = document.getElementById(id);
+    const val = sel.value;
+    sel.innerHTML = '<option value="">-- None --</option>';
+    appData.roster.forEach(m => sel.innerHTML += `<option value="${m.name}">${m.name}</option>`);
+    sel.value = val;
+  });
+  const pilotSel = document.getElementById('shift-pilot');
+  const ccSel = document.getElementById('shift-crew-chief');
+  if(pilotSel) {
+    const pv = pilotSel.value;
+    pilotSel.innerHTML = '<option value="">-- Select Pilot --</option>';
+    (appData.pilots||[]).forEach(p => pilotSel.innerHTML += `<option value="${p}">${p}</option>`);
+    pilotSel.value = pv;
+  }
+  if(ccSel) {
+    const cv = ccSel.value;
+    ccSel.innerHTML = '<option value="">-- Select Crew Chief --</option>';
+    (appData.crewChiefs||[]).forEach(c => ccSel.innerHTML += `<option value="${c}">${c}</option>`);
+    ccSel.value = cv;
+  }
+}
+function populateHoursSelect() {
+  const sel = document.getElementById('hours-name');
+  const val = sel.value;
+  sel.innerHTML = '<option value="">-- Select Your Name --</option>';
+  appData.roster.forEach(m => sel.innerHTML += `<option value="${m.name}">${m.name}</option>`);
+  sel.value = val;
+}
+function populateViewFilter() {
+  const sel = document.getElementById('view-filter-name');
+  if(!sel) return;
+  const val = sel.value;
+  sel.innerHTML = '<option value="">All Members</option>';
+  appData.roster.forEach(m => sel.innerHTML += `<option value="${m.name}">${m.name}</option>`);
+  sel.value = val;
+}
+function populateShiftLogFilter() {
+  const sel = document.getElementById('shiftlog-filter-name');
+  if(!sel) return;
+  const val = sel.value;
+  sel.innerHTML = '<option value="">All Members</option>';
+  appData.roster.forEach(m => sel.innerHTML += `<option value="${m.name}">${m.name}</option>`);
+  sel.value = val;
+}
+
+// ============================================================
+// YEAR FLAG
+// ============================================================
+function checkDateYear(dateVal, flagElId) {
+  const flagEl = document.getElementById(flagElId);
+  if(!flagEl || !dateVal) { if(flagEl) flagEl.style.display='none'; return; }
+  const year = parseInt(dateVal.split('-')[0]);
+  const cur = new Date().getFullYear();
+  if(year < cur - 1 || year > cur + 1) {
+    flagEl.style.display = 'block';
+    flagEl.innerHTML = `<div class="year-flag">⚠️ Year ${year} looks unusual — please double-check this date.</div>`;
+  } else { flagEl.style.display = 'none'; }
+}
+function checkYearFlag(dateVal) {
+  if(!dateVal) return false;
+  const year = parseInt(dateVal.split('-')[0]);
+  const cur = new Date().getFullYear();
+  return year < cur - 1 || year > cur + 1;
+}
+
+// ============================================================
+// HOURS CALCULATION
+// ============================================================
+const allHourIds = ['h-rescue-standby','h-rescue-ops','h-meeting','h-team-training','h-hoist','h-other-training','h-inter-unit','h-admin','h-equipment','h-fitness','h-fundraising','h-range','h-other'];
+
+function updateTotals() {
+  const total = allHourIds.reduce((s,id) => s + (parseFloat(document.getElementById(id)?.value)||0), 0);
+  const el = document.getElementById('total-all');
+  if(el) el.textContent = total;
+}
+setTimeout(() => {
+  allHourIds.forEach(id => { const el = document.getElementById(id); if(el) el.addEventListener('input', updateTotals); });
+  const dateEl = document.getElementById('hours-date');
+  if(dateEl) dateEl.addEventListener('change', () => checkDateYear(dateEl.value, 'hours-date-flag'));
+}, 150);
+
+// ============================================================
+// MISSION TOGGLE
+// ============================================================
+let selectedMissionType = '';
+function toggleMissionSection() {
+  document.getElementById('mission-details').style.display = document.getElementById('has-mission').checked ? 'block' : 'none';
+}
+function selectMissionType(type, btn) {
+  selectedMissionType = type;
+  document.querySelectorAll('.mission-type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.mission-section').forEach(s => s.classList.remove('active'));
+  if(type === 'Rescue') document.getElementById('section-rescue').classList.add('active');
+  else if(type === 'Scene Call') document.getElementById('section-medical').classList.add('active');
+  else if(type === 'Inter-facility (IFT)') document.getElementById('section-interfacility').classList.add('active');
+  else if(type === 'Special Event Standby') document.getElementById('section-other').classList.add('active');
+  else if(type === 'Other Mission') document.getElementById('section-othermission').classList.add('active');
+}
+
+// ============================================================
+// SUBMIT SHIFT
+// ============================================================
+function submitShift() {
+  const date = document.getElementById('shift-date').value;
+  const vehicle = document.getElementById('shift-vehicle').value;
+  const pilot = document.getElementById('shift-pilot').value;
+  const crewChief = document.getElementById('shift-crew-chief').value;
+  const am1 = document.getElementById('shift-am1').value;
+  if(!date) { showAlert('Please enter the shift date.'); return; }
+  if(!vehicle) { showAlert('Please select a vehicle.'); return; }
+  if(!pilot) { showAlert('Please select a pilot.'); return; }
+  if(!crewChief) { showAlert('Please select a crew chief.'); return; }
+  if(!am1) { showAlert('Please select at least Air Medic 1.'); return; }
+
+  // Validate mission fields if mission is checked
+  if(document.getElementById('has-mission').checked) {
+    if(!selectedMissionType) { showAlert('Please select the type of mission.'); return; }
+    if(!document.getElementById('mission-incident').value.trim()) { showAlert('Please enter the incident number.'); return; }
+    if(selectedMissionType === 'Rescue') {
+      if(!document.getElementById('rescue-type').value) { showAlert('Please select the type of rescue.'); return; }
+      if(!document.getElementById('rescue-disposition').value) { showAlert('Please select a disposition for the rescue.'); return; }
+      if(!document.getElementById('rescue-location').value.trim()) { showAlert('Please enter the rescue general location.'); return; }
+      if(!document.getElementById('rescue-description').value.trim()) { showAlert('Please enter a brief description of the rescue.'); return; }
+    } else if(selectedMissionType === 'Scene Call') {
+      if(!document.getElementById('medical-type').value) { showAlert('Please select the scene call subtype.'); return; }
+      if(!document.getElementById('medical-disposition').value) { showAlert('Please select a disposition.'); return; }
+      if(!document.getElementById('medical-location').value.trim()) { showAlert('Please enter the general location.'); return; }
+      if(!document.getElementById('medical-description').value.trim()) { showAlert('Please enter a brief description.'); return; }
+    } else if(selectedMissionType === 'Inter-facility (IFT)') {
+      if(!document.getElementById('interfacility-disposition').value) { showAlert('Please select a disposition.'); return; }
+      if(!document.getElementById('interfacility-location').value.trim()) { showAlert('Please enter the hospital.'); return; }
+      if(!document.getElementById('interfacility-description').value.trim()) { showAlert('Please enter a brief description.'); return; }
+    } else if(selectedMissionType === 'Special Event Standby') {
+      if(!document.getElementById('other-disposition').value) { showAlert('Please select a disposition.'); return; }
+      if(!document.getElementById('other-location').value.trim()) { showAlert('Please enter the event location.'); return; }
+      if(!document.getElementById('other-description').value.trim()) { showAlert('Please enter a brief description.'); return; }
+    } else if(selectedMissionType === 'Other Mission') {
+      if(!document.getElementById('othermission-type').value) { showAlert('Please select the mission subtype.'); return; }
+      if(!document.getElementById('othermission-disposition').value) { showAlert('Please select a disposition.'); return; }
+      if(!document.getElementById('othermission-location').value.trim()) { showAlert('Please enter the general location.'); return; }
+      if(!document.getElementById('othermission-description').value.trim()) { showAlert('Please enter a brief description.'); return; }
+    }
+  }
+
+  const shift = {
+    id: Date.now(), date,
+    submittedAt: new Date().toISOString(),
+    vehicle: document.getElementById('shift-vehicle').value,
+    pilot: document.getElementById('shift-pilot').value,
+    crewChief: document.getElementById('shift-crew-chief').value,
+    am1, am2: document.getElementById('shift-am2').value,
+    am3: document.getElementById('shift-am3').value,
+    otherMedic: document.getElementById('shift-other-medic').value,
+    hasMission: document.getElementById('has-mission').checked,
+    missionType: selectedMissionType,
+    incidentNumber: document.getElementById('mission-incident').value,
+    dispatchTime: document.getElementById('mission-dispatch-time').value,
+    mission: {}
+  };
+  if(shift.hasMission && selectedMissionType === 'Rescue') {
+    shift.mission = { rescueType: document.getElementById('rescue-type').value, disposition: document.getElementById('rescue-disposition').value, location: document.getElementById('rescue-location').value, description: document.getElementById('rescue-description').value };
+  } else if(shift.hasMission && selectedMissionType === 'Scene Call') {
+    shift.mission = { sceneCallType: document.getElementById('medical-type').value, disposition: document.getElementById('medical-disposition').value, location: document.getElementById('medical-location').value, description: document.getElementById('medical-description').value };
+  } else if(shift.hasMission && selectedMissionType === 'Inter-facility (IFT)') {
+    shift.mission = { disposition: document.getElementById('interfacility-disposition').value, location: document.getElementById('interfacility-location').value, description: document.getElementById('interfacility-description').value };
+  } else if(shift.hasMission && selectedMissionType === 'Special Event Standby') {
+    shift.mission = { disposition: document.getElementById('other-disposition').value, location: document.getElementById('other-location').value, description: document.getElementById('other-description').value };
+  } else if(shift.hasMission && selectedMissionType === 'Other Mission') {
+    shift.mission = { otherMissionType: document.getElementById('othermission-type').value, disposition: document.getElementById('othermission-disposition').value, location: document.getElementById('othermission-location').value, description: document.getElementById('othermission-description').value };
+  }
+  appData.shifts.push(shift);
+  saveData(appData);
+  sendToSheets('shift', shift);
+  showToast('✅ Shift logged successfully!');
+  document.getElementById('shift-date').value = new Date().toISOString().split('T')[0];
+  ['shift-vehicle','shift-am1','shift-am2','shift-am3','shift-pilot','shift-crew-chief'].forEach(id => document.getElementById(id).value = '');
+  ['shift-other-medic','mission-incident'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('mission-dispatch-time').value = '';
+  document.getElementById('has-mission').checked = false;
+  document.getElementById('mission-details').style.display = 'none';
+  selectedMissionType = '';
+  document.querySelectorAll('.mission-type-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.mission-section').forEach(s => s.classList.remove('active'));
+}
+
+// ============================================================
+// SUBMIT HOURS
+// ============================================================
+function submitHours() {
+  const name = document.getElementById('hours-name').value;
+  const date = document.getElementById('hours-date').value;
+  if(!name) { showAlert('Please select your name.'); return; }
+  if(!date) { showAlert('Please select a date.'); return; }
+  const sub = {
+    id: Date.now(), name, date,
+    submittedAt: new Date().toISOString(),
+    rescueStandby: parseFloat(document.getElementById('h-rescue-standby').value)||0,
+    rescueOps: parseFloat(document.getElementById('h-rescue-ops').value)||0,
+    meeting: parseFloat(document.getElementById('h-meeting').value)||0,
+    teamTraining: parseFloat(document.getElementById('h-team-training').value)||0,
+    hoist: parseFloat(document.getElementById('h-hoist').value)||0,
+    otherTraining: parseFloat(document.getElementById('h-other-training').value)||0,
+    otherTrainingNote: document.getElementById('h-other-training-note').value,
+    interUnit: parseFloat(document.getElementById('h-inter-unit').value)||0,
+    admin: parseFloat(document.getElementById('h-admin').value)||0,
+    equipment: parseFloat(document.getElementById('h-equipment').value)||0,
+    fitness: parseFloat(document.getElementById('h-fitness').value)||0,
+    fundraising: parseFloat(document.getElementById('h-fundraising').value)||0,
+    range: parseFloat(document.getElementById('h-range').value)||0,
+    other: parseFloat(document.getElementById('h-other').value)||0,
+    otherNote: document.getElementById('h-other-note').value,
+    miles: parseFloat(document.getElementById('h-miles').value)||0,
+  };
+  appData.hoursSubmissions.push(sub);
+  saveData(appData);
+  sendToSheets('hours', sub);
+  showToast('✅ Hours submitted!');
+  allHourIds.forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  document.getElementById('h-miles').value = '';
+  ['h-other-training-note','h-other-note'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('hours-date-flag').style.display = 'none';
+  updateTotals();
+}
+
+// ============================================================
+// PUBLIC HOURS VIEW
+// ============================================================
+function renderPublicHours() {
+  const filterName = document.getElementById('view-filter-name')?.value || '';
+  const filterMonth = document.getElementById('view-filter-month')?.value || '';
+  const el = document.getElementById('public-hours-list');
+  if(!el) return;
+  let subs = [...appData.hoursSubmissions];
+  if(filterName) subs = subs.filter(s => s.name === filterName);
+  if(filterMonth) subs = subs.filter(s => s.date && s.date.startsWith(filterMonth));
+  subs.sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  if(!subs.length) { el.innerHTML = '<p style="color:var(--gray);font-size:.9rem">No submissions found.</p>'; return; }
+  el.innerHTML = subs.map(s => {
+    const total = calcTotal(s);
+    const flag = checkYearFlag(s.date);
+    const submitted = s.submittedAt ? `<div style="font-size:.7rem;color:var(--gray);margin-bottom:4px">Submitted: ${new Date(s.submittedAt).toLocaleString()}</div>` : '';
+    const fields = [
+      ['Rescue Standby',s.rescueStandby],['Rescue Ops',s.rescueOps],
+      ['Unit Meeting',s.meeting],['Team Training',s.teamTraining],
+      ['Hoist Currency',s.hoist],['Other Training',s.otherTraining,s.otherTrainingNote],
+      ['Inter-Unit Support',s.interUnit],['Admin',s.admin],
+      ['Equipment',s.equipment],['Fitness',s.fitness],
+      ['Fund Raising/PR',s.fundraising],['Range',s.range],
+      ['Other Hours',s.other,s.otherNote]
+    ].filter(f=>f[1]>0);
+    return `<div class="hours-view-item">
+      <h4>
+        ${s.name} — ${formatDate(s.date)}
+        ${flag?`<span class="year-flag" style="display:inline-flex">⚠️ Year unusual</span>`:''}
+        <span style="margin-left:auto;font-family:'Barlow Condensed';font-size:1.1rem;color:var(--gold)">${total}h total</span>
+      </h4>
+      ${submitted}
+      ${s.miles?`<p style="font-size:.8rem;color:var(--gray-light);margin-bottom:6px">🚗 POV Miles: <strong style="color:var(--white)">${s.miles}</strong></p>`:''}
+      <div class="hours-detail-grid">
+        ${fields.map(f=>`<div class="hours-detail-item">${f[0]}: <span>${f[1]}h${f[2]?' ('+f[2]+')':''}</span></div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function calcTotal(s) {
+  return (s.rescueStandby||0)+(s.rescueOps||0)+(s.meeting||0)+(s.teamTraining||0)+(s.hoist||0)+(s.otherTraining||0)+(s.interUnit||0)+(s.admin||0)+(s.equipment||0)+(s.fitness||0)+(s.fundraising||0)+(s.range||0)+(s.other||0);
+}
+
+// ============================================================
+// PUBLIC MONTHLY REPORT
+// ============================================================
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+
+
+// ============================================================
+// VIEW SHIFT LOG
+// ============================================================
+function renderShiftLog() {
+  const filterName = document.getElementById('shiftlog-filter-name')?.value || '';
+  const filterMonth = document.getElementById('shiftlog-filter-month')?.value || '';
+  const statsEl = document.getElementById('shiftlog-stats');
+  const listEl = document.getElementById('shiftlog-list');
+  let shifts = [...appData.shifts];
+  if(filterName) shifts = shifts.filter(s => [s.am1,s.am2,s.am3].includes(filterName));
+  if(filterMonth) shifts = shifts.filter(s => s.date && s.date.startsWith(filterMonth));
+  shifts.sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  const missions = shifts.filter(s => s.hasMission);
+  statsEl.innerHTML = `
+    <div class="stat-card"><div class="num">${shifts.length}</div><div class="lbl">Total Shifts</div></div>
+    <div class="stat-card"><div class="num">${missions.length}</div><div class="lbl">With Mission</div></div>
+    <div class="stat-card"><div class="num">${shifts.filter(s=>!s.hasMission).length}</div><div class="lbl">Standby Only</div></div>`;
+  if(!shifts.length) { listEl.innerHTML = '<p style="color:var(--gray);font-size:.9rem">No shifts found.</p>'; return; }
+  listEl.innerHTML = shifts.map(s => {
+    const crew = [s.am1,s.am2,s.am3].filter(Boolean).join(', ');
+    const missionBadge = s.hasMission
+      ? `<span class="mission-tag" style="background:rgba(200,168,75,0.15);color:var(--gold)">${s.missionType}</span>`
+      : `<span class="mission-tag">Standby / No Mission</span>`;
+    const loc = s.mission?.location||'', desc = s.mission?.description||'';
+    const submitted = s.submittedAt ? ` · <span style="font-size:.7rem;color:var(--gray)">submitted ${new Date(s.submittedAt).toLocaleString()}</span>` : '';
+    return `<div class="mission-item"><div class="mission-item-info" style="width:100%">
+      <h4 style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span>${formatDate(s.date)}</span>
+        ${s.vehicle?`<span style="color:var(--gray-light);font-weight:400">— ${s.vehicle}</span>`:''}
+        ${missionBadge}${submitted}
+      </h4>
+      <p style="margin-top:4px">${s.pilot?`✈ Pilot: ${s.pilot} · `:''}👤 Air Medics: ${crew}${s.otherMedic?` · Other: ${s.otherMedic}`:''}</p>
+      ${s.hasMission?`<p style="margin-top:4px;color:var(--gray-light);font-size:.83rem">${loc?`📍 ${loc}`:''}${desc?` — ${desc.substring(0,150)}${desc.length>150?'…':''}`:''} ${s.incidentNumber?` · <strong>#${s.incidentNumber}</strong>`:''}</p>`:''}
+    </div></div>`;
+  }).join('');
+}
+
+// ============================================================
+// RENDER MISSIONS (Debrief format with month tabs)
+// ============================================================
+let activeMissionsMonth = 'all';
+
+function renderMissions() {
+  const missions = appData.shifts.filter(s => s.hasMission);
+  const statsEl = document.getElementById('missions-stats');
+  const listEl = document.getElementById('missions-list');
+  const tabsEl = document.getElementById('missions-month-tabs');
+
+  // Stats
+  const counts = { Rescue:0,'Scene Call':0,'Inter-facility (IFT)':0,'Special Event Standby':0,'Other Mission':0 };
+  missions.forEach(m => { if(counts[m.missionType]!==undefined) counts[m.missionType]++; });
+  statsEl.innerHTML = `
+    <div class="stat-card"><div class="num">${missions.length}</div><div class="lbl">Total Missions</div></div>
+    <div class="stat-card"><div class="num">${counts['Rescue']}</div><div class="lbl">Rescue</div></div>
+    <div class="stat-card"><div class="num">${counts['Scene Call']}</div><div class="lbl">Scene Call</div></div>
+    <div class="stat-card"><div class="num">${counts['Inter-facility (IFT)']}</div><div class="lbl">IFT</div></div>
+    <div class="stat-card"><div class="num">${counts['Special Event Standby']+counts['Other Mission']}</div><div class="lbl">Other</div></div>`;
+
+  // Build month tabs from available data
+  const monthsSet = new Set();
+  missions.forEach(m => { if(m.date) monthsSet.add(m.date.substring(0,7)); });
+  const months = [...monthsSet].sort();
+
+  tabsEl.innerHTML = `<button class="month-tab-btn ${activeMissionsMonth==='all'?'active':''}" onclick="setMissionsMonth('all')">All</button>` +
+    months.map(ym => {
+      const [y,mo] = ym.split('-');
+      const label = MONTH_NAMES[parseInt(mo)-1].substring(0,3) + ' ' + y;
+      return `<button class="month-tab-btn ${activeMissionsMonth===ym?'active':''}" onclick="setMissionsMonth('${ym}')">${label}</button>`;
+    }).join('');
+
+  // Filter missions
+  let filtered = [...missions];
+  if(activeMissionsMonth !== 'all') filtered = filtered.filter(m => m.date && m.date.startsWith(activeMissionsMonth));
+
+  // Sort chronologically (oldest first for debrief)
+  filtered.sort((a,b) => {
+    const dateCmp = (a.date||'').localeCompare(b.date||'');
+    if(dateCmp !== 0) return dateCmp;
+    return (a.dispatchTime||'').localeCompare(b.dispatchTime||'');
+  });
+
+  if(!filtered.length) { listEl.innerHTML = '<p style="color:var(--gray);font-size:.9rem">No missions for this period.</p>'; return; }
+
+  listEl.innerHTML = filtered.map((m, idx) => {
+    const loc = m.mission?.location||'', desc = m.mission?.description||'';
+    const allCrew = [m.am1, m.am2, m.am3, m.pilot, m.crewChief, m.otherMedic].filter(Boolean).join(', ');
+    const typeKey = m.missionType==='Rescue'?'rescue':m.missionType==='Scene Call'?'medical':m.missionType==='Inter-facility (IFT)'?'medical':m.missionType==='Other Mission'?'sar':'standby';
+    const badgeClass = typeKey;
+    const cardClass = `type-${typeKey}`;
+    const dispatchStr = m.dispatchTime ? `<div class="debrief-dispatch">⏱ Dispatch: ${formatTime(m.dispatchTime)}</div>` : '';
+    const incidentStr = m.incidentNumber ? ` &nbsp;·&nbsp; <span style="color:var(--gray-light)">#${m.incidentNumber}</span>` : '';
+    return `<div class="debrief-card ${cardClass}">
+      <div class="debrief-header">
+        <div>
+          <div class="debrief-datetime">📅 ${formatDateLong(m.date)}${incidentStr}</div>
+          ${dispatchStr}
+        </div>
+        <span class="debrief-type-badge ${badgeClass}">${m.missionType}</span>
+      </div>
+      <div class="debrief-row"><span class="debrief-label">Vehicle</span><span class="debrief-value">${m.vehicle||'—'}</span></div>
+      <div class="debrief-row"><span class="debrief-label">Crew</span><span class="debrief-value"><span style="color:var(--gold-light)">${allCrew||'—'}</span></span></div>
+      ${loc?`<div class="debrief-row"><span class="debrief-label">Location</span><span class="debrief-value">📍 ${loc}</span></div>`:''}
+      ${desc?`<div class="debrief-description">${desc}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function setMissionsMonth(ym) {
+  activeMissionsMonth = ym;
+  renderMissions();
+}
+
+function formatDateLong(d) {
+  if(!d) return '';
+  const [y,m,day] = d.split('-');
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  return `${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`;
+}
+
+function formatTime(t) {
+  if(!t) return '';
+  const [hh, mm] = t.split(':');
+  const h = parseInt(hh), ampm = h >= 12 ? 'PM' : 'AM', h12 = h % 12 || 12;
+  return `${h12}:${mm} ${ampm}`;
+}
+
+function printMissionRecap() {
+  const monthIdx = parseInt(document.getElementById('mission-recap-month').value);
+  const year = parseInt(document.getElementById('mission-recap-year').value) || new Date().getFullYear();
+  const monthStr = `${year}-${String(monthIdx+1).padStart(2,'0')}`;
+  const monthName = MONTH_NAMES[monthIdx] + ' ' + year;
+  const ldr = appData.leadership || {};
+  const allShifts = appData.shifts.filter(s => s.date && s.date.startsWith(monthStr));
+  const missions = allShifts.filter(s => s.hasMission);
+  const hoistMissions = missions.filter(s => s.mission?.rescueType === 'Hoist');
+  const patients = missions.filter(s => s.mission?.disposition && s.mission.disposition.includes('Transported'));
+  const cancelled = missions.filter(s => s.mission?.disposition === 'Cancelled');
+  const publicAssist = missions.filter(s => s.mission?.disposition && s.mission.disposition.includes('Public Assist'));
+  const otherMissions = missions.filter(s => s.missionType !== 'Rescue' && s.missionType !== 'Scene Call' && s.missionType !== 'Inter-facility (IFT)');
+
+  const missionRows = missions.map(m => {
+    const loc = m.mission?.location||'—';
+    const disp = m.mission?.disposition||'—';
+    const rtype = m.mission?.rescueType||m.mission?.transportType||'';
+    const crew = [m.am1,m.am2,m.am3,m.pilot,m.crewChief].filter(Boolean).join(', ');
+    const dt = m.dispatchTime ? formatTime(m.dispatchTime) : '—';
+    return `<tr>
+      <td>${formatDate(m.date)}</td>
+      <td>${dt}</td>
+      <td>${m.missionType}</td>
+      <td>${rtype}</td>
+      <td>${crew}</td>
+      <td>${loc}</td>
+      <td>${disp}</td>
+      <td>${m.incidentNumber||'—'}</td>
+    </tr>`;
+  }).join('');
+
+  const w = window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><title>SBSD Air Medics — Mission Recap ${monthName}</title>
+  <style>
+    @page { size: portrait; margin: 10mm 8mm; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; font-size: 8px; color: #111; }
+    .header { text-align:center; border-bottom: 2px solid #1a1a2e; padding-bottom:8px; margin-bottom:10px; }
+    .header h1 { font-size:13px; font-weight:bold; color:#1a1a2e; }
+    .header h2 { font-size:10px; color:#444; font-weight:normal; margin-top:2px; }
+    .header h3 { font-size:9px; color:#C8A84B; font-weight:bold; margin-top:4px; letter-spacing:.05em; }
+    .meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:4px 16px; margin-bottom:10px; font-size:8px; }
+    .meta-grid div { padding:2px 0; }
+    .meta-grid strong { color:#1a1a2e; }
+    .summary-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin-bottom:12px; }
+    .summary-box { border:1px solid #aaa; border-radius:3px; padding:6px 4px; text-align:center; }
+    .summary-box .num { font-size:16px; font-weight:bold; color:#1a1a2e; }
+    .summary-box .lbl { font-size:6.5px; text-transform:uppercase; color:#555; margin-top:1px; }
+    table { width:100%; border-collapse:collapse; }
+    th { background:#1a1a2e; color:#C8A84B; font-size:7px; padding:4px 3px; border:1px solid #555; text-align:left; }
+    td { font-size:7px; padding:3px 3px; border:1px solid #ccc; vertical-align:top; }
+    tr:nth-child(even) td { background:#f5f5f5; }
+    .footer { margin-top:12px; font-size:7.5px; color:#555; display:flex; justify-content:space-between; border-top:1px solid #ccc; padding-top:6px; }
+  </style></head><body>
+  <div class="header">
+    <h1>SAN BERNARDINO COUNTY SHERIFF'S DEPARTMENT</h1>
+    <h2>Volunteer Unit Missions Recap — Aviation Division Air Rescue Team</h2>
+    <h3>UNIT 227 · AIR RESCUE / AIR MEDICS · ${monthName.toUpperCase()}</h3>
+  </div>
+  <div class="meta-grid">
+    <div><strong>Unit Coordinator:</strong> ${ldr.coordinator||'__________'}</div>
+    <div><strong>Team Commander:</strong> ${ldr.commander||'__________'}</div>
+    <div><strong>Assistant Coordinator:</strong> ${ldr.asstCoordinator||'__________'}</div>
+    <div><strong>Secretary / Preparer:</strong> ${ldr.secretary||'__________'}</div>
+    <div><strong>Total Unit Members:</strong> ${appData.roster.length}</div>
+    <div><strong>Meeting:</strong> Second Saturday of every month</div>
+  </div>
+  <div class="summary-grid">
+    <div class="summary-box"><div class="num">${missions.length}</div><div class="lbl">Total Missions</div></div>
+    <div class="summary-box"><div class="num">${hoistMissions.length}</div><div class="lbl">Hoist Missions</div></div>
+    <div class="summary-box"><div class="num">${patients.length}</div><div class="lbl">Patients Transported</div></div>
+    <div class="summary-box"><div class="num">${cancelled.length}</div><div class="lbl">Cancelled Calls</div></div>
+    <div class="summary-box"><div class="num">${publicAssist.length}</div><div class="lbl">Public Assists</div></div>
+    <div class="summary-box"><div class="num">${otherMissions.length}</div><div class="lbl">Other Missions</div></div>
+  </div>
+  <table>
+    <thead><tr>
+      <th>Date</th>
+      <th>Dispatch</th>
+      <th>Type</th>
+      <th>Sub-Type</th>
+      <th>Air Medic Crew</th>
+      <th>Location</th>
+      <th>Disposition</th>
+      <th>Incident #</th>
+    </tr></thead>
+    <tbody>
+      ${missionRows || '<tr><td colspan="8" style="text-align:center;color:#888;padding:10px">No missions this period</td></tr>'}
+    </tbody>
+  </table>
+  <div class="footer">
+    <span>Prepared by: ${ldr.secretary||'__________'}</span>
+    <span>Location: SBSD Aviation Division</span>
+  </div>
+  </body></html>`);
+  w.document.write('<script>window.onload=function(){window.print();window.onafterprint=function(){window.close();};}<\/script>');
+  w.document.close(); w.focus();
+}
+
+function formatDate(d) {
+  if(!d) return '';
+  const [y,m,day] = d.split('-');
+  return `${m}/${day}/${y}`;
+}
+
+// ============================================================
+// SECRETARY
+// ============================================================
+function checkPassword() {
+  const pw = document.getElementById('sec-password').value;
+  if(pw === appData.password) {
+    secUnlocked = true;
+    document.getElementById('sec-gate').style.display = 'none';
+    document.getElementById('sec-dashboard').style.display = 'block';
+    renderSecretaryDashboard();
+  } else { document.getElementById('pw-error').style.display = 'block'; }
+}
+function openLeadershipModal() {
+  renderLeadershipPositions();
+  document.getElementById('leadership-modal').style.display = 'flex';
+}
+function closeLeadershipModal() {
+  document.getElementById('leadership-modal').style.display = 'none';
+}
+function openPasswordModal() {
+  document.getElementById('new-password').value = '';
+  document.getElementById('confirm-password').value = '';
+  document.getElementById('password-modal').style.display = 'flex';
+}
+function closePasswordModal() {
+  document.getElementById('password-modal').style.display = 'none';
+}
+
+function changePassword() {
+  const np = document.getElementById('new-password').value;
+  const cp = document.getElementById('confirm-password').value;
+  if(!np) { showAlert('Enter a new password.'); return; }
+  if(np !== cp) { showAlert('Passwords do not match.'); return; }
+  appData.password = np; saveData(appData);
+  showToast('✅ Password updated!');
+  document.getElementById('new-password').value = '';
+  document.getElementById('confirm-password').value = '';
+  closePasswordModal();
+}
+
+function renderLeadershipPositions() {
+  const ldr = appData.leadership || {};
+  const f = (id, val) => { const el = document.getElementById(id); if(el) el.value = val||''; };
+  f('pos-commander', ldr.commander);
+  f('pos-secretary', ldr.secretary);
+  f('pos-coordinator', ldr.coordinator);
+  f('pos-asst-coordinator', ldr.asstCoordinator);
+}
+
+function saveLeadershipPositions() {
+  if(!appData.leadership) appData.leadership = {};
+  appData.leadership.commander = document.getElementById('pos-commander').value.trim();
+  appData.leadership.secretary = document.getElementById('pos-secretary').value.trim();
+  appData.leadership.coordinator = document.getElementById('pos-coordinator').value.trim();
+  appData.leadership.asstCoordinator = document.getElementById('pos-asst-coordinator').value.trim();
+  saveData(appData);
+  showToast('✅ Leadership positions saved!');
+}
+function renderSecretaryDashboard() {
+  renderRoster(); renderPilotsCrewChiefs(); renderHoursSubmissions(); renderShiftsList();
+  renderLeadershipPositions();
+  const now = new Date();
+  document.getElementById('report-year').value = now.getFullYear();
+  const sel = document.getElementById('edit-h-name');
+  if(sel) { sel.innerHTML=''; appData.roster.forEach(m => sel.innerHTML += `<option value="${m.name}">${m.name}</option>`); }
+}
+
+// ROSTER
+// --- Last-name alphabetical sorting -------------------------------------
+// Treats the final whitespace-separated token of the full name as the last
+// name (e.g. "Brad Adkins" -> "adkins"). Ties break on the full name.
+function lastNameKey(fullName) {
+  const parts = (fullName || '').trim().split(/\s+/);
+  return parts.length ? parts[parts.length - 1].toLowerCase() : '';
+}
+function compareByLastName(a, b) {
+  const cmp = lastNameKey(a.name).localeCompare(lastNameKey(b.name));
+  if (cmp !== 0) return cmp;
+  return (a.name || '').toLowerCase().localeCompare((b.name || '').toLowerCase());
+}
+// Sorts appData.roster in place so display, selects, and sync all stay in
+// sync and the array indices used by edit/remove buttons remain valid.
+function sortRosterByLastName() {
+  appData.roster.sort(compareByLastName);
+}
+
+function renderRoster() {
+  sortRosterByLastName();
+  document.getElementById('roster-tbody').innerHTML = appData.roster.map((m,i) => `
+    <tr>
+      <td>${m.name}</td><td>${m.cert}</td>
+      <td><span class="status-badge status-${m.status}">${m.status}</span></td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" onclick="openEditMember(${i})">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="removeMember(${i})">Remove</button>
+      </td>
+    </tr>`).join('');
+}
+function openEditMember(i) {
+  const m = appData.roster[i];
+  document.getElementById('edit-member-idx').value = i;
+  document.getElementById('edit-member-name').value = m.name;
+  document.getElementById('edit-member-cert').value = m.cert;
+  document.getElementById('edit-member-status').value = m.status;
+  openModal('modal-edit-member');
+}
+function saveEditMember() {
+  const i = parseInt(document.getElementById('edit-member-idx').value);
+  const newName = document.getElementById('edit-member-name').value.trim();
+  if(!newName) { showAlert('Name cannot be empty.'); return; }
+  const oldName = appData.roster[i].name;
+  appData.roster[i] = { name: newName, cert: document.getElementById('edit-member-cert').value, status: document.getElementById('edit-member-status').value };
+  if(oldName !== newName) {
+    appData.hoursSubmissions.forEach(s => { if(s.name===oldName) s.name=newName; });
+    appData.shifts.forEach(s => { ['am1','am2','am3'].forEach(k => { if(s[k]===oldName) s[k]=newName; }); });
+  }
+  sortRosterByLastName();
+  saveData(appData); closeModal('modal-edit-member'); renderRoster();
+  showToast('✅ Member updated!');
+}
+function addMember() {
+  const name = document.getElementById('new-member-name').value.trim();
+  if(!name) { showAlert('Enter member name.'); return; }
+  appData.roster.push({ name, cert: document.getElementById('new-member-cert').value, status: document.getElementById('new-member-status').value });
+  sortRosterByLastName();
+  saveData(appData); document.getElementById('new-member-name').value = '';
+  renderRoster(); showToast('✅ Member added!');
+}
+function removeMember(i) {
+  if(!confirm('Remove ' + appData.roster[i].name + '?')) return;
+  appData.roster.splice(i,1); saveData(appData); renderRoster(); showToast('Member removed.');
+}
+
+// PILOTS & CREW CHIEFS
+function renderPilotsCrewChiefs() {
+  const pl = document.getElementById('pilots-list');
+  const cl = document.getElementById('crewchiefs-list');
+  if(!pl || !cl) return;
+  if(!appData.pilots) appData.pilots = [];
+  if(!appData.crewChiefs) appData.crewChiefs = [];
+  pl.innerHTML = appData.pilots.length ? appData.pilots.map((p,i) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(138,155,176,0.1)">
+      <span style="font-size:.9rem">${p}</span>
+      <button class="btn btn-danger btn-sm" onclick="removePilot(${i})">Remove</button>
+    </div>`).join('') : '<p style="color:var(--gray);font-size:.85rem">No pilots added yet.</p>';
+  cl.innerHTML = appData.crewChiefs.length ? appData.crewChiefs.map((c,i) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(138,155,176,0.1)">
+      <span style="font-size:.9rem">${c}</span>
+      <button class="btn btn-danger btn-sm" onclick="removeCrewChief(${i})">Remove</button>
+    </div>`).join('') : '<p style="color:var(--gray);font-size:.85rem">No crew chiefs added yet.</p>';
+}
+function addPilot() {
+  const name = document.getElementById('new-pilot-name').value.trim();
+  if(!name) return;
+  if(!appData.pilots) appData.pilots = [];
+  appData.pilots.push(name);
+  saveData(appData);
+  document.getElementById('new-pilot-name').value = '';
+  renderPilotsCrewChiefs();
+  showToast('✅ Pilot added!');
+}
+function removePilot(i) {
+  if(!confirm('Remove ' + appData.pilots[i] + '?')) return;
+  appData.pilots.splice(i,1); saveData(appData); renderPilotsCrewChiefs(); showToast('Pilot removed.');
+}
+function addCrewChief() {
+  const name = document.getElementById('new-crewchief-name').value.trim();
+  if(!name) return;
+  if(!appData.crewChiefs) appData.crewChiefs = [];
+  appData.crewChiefs.push(name);
+  saveData(appData);
+  document.getElementById('new-crewchief-name').value = '';
+  renderPilotsCrewChiefs();
+  showToast('✅ Crew chief added!');
+}
+function removeCrewChief(i) {
+  if(!confirm('Remove ' + appData.crewChiefs[i] + '?')) return;
+  appData.crewChiefs.splice(i,1); saveData(appData); renderPilotsCrewChiefs(); showToast('Crew chief removed.');
+}
+
+// HOURS SUBMISSIONS (SECRETARY)
+function renderHoursSubmissions() {
+  const el = document.getElementById('hours-submissions-list');
+  if(!appData.hoursSubmissions.length) { el.innerHTML = '<p style="color:var(--gray);font-size:.9rem">No submissions yet.</p>'; return; }
+  const subs = [...appData.hoursSubmissions].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  el.innerHTML = subs.map(s => {
+    const total = calcTotal(s);
+    const flag = checkYearFlag(s.date) ? `<span class="year-flag" style="display:inline-flex;margin-left:8px">⚠️ Year unusual</span>` : '';
+    return `<div class="mission-item">
+      <div class="mission-item-info">
+        <h4>${s.name} — ${formatDate(s.date)} ${flag}</h4>
+        <p>Total: ${total}h | Miles: ${s.miles||0}</p>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="btn btn-secondary btn-sm" onclick="openEditHours(${s.id})">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteHoursSub(${s.id})">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function openEditHours(id) {
+  const s = appData.hoursSubmissions.find(x=>x.id===id);
+  if(!s) return;
+  document.getElementById('edit-hours-id').value = id;
+  document.getElementById('edit-h-name').value = s.name;
+  document.getElementById('edit-h-date').value = s.date||'';
+  document.getElementById('edit-h-miles').value = s.miles||0;
+  document.getElementById('edit-h-notes').value = s.notes||'';
+  ['rescue-standby','rescue-ops','meeting','team-training','hoist','other-training','inter-unit','admin','equipment','fitness','fundraising','range','other'].forEach(k => {
+    const key = k.replace(/-([a-z])/g, (_,c)=>c.toUpperCase());
+    const el = document.getElementById('edit-h-'+k);
+    if(el) el.value = s[key]||0;
+  });
+  openModal('modal-edit-hours');
+}
+function saveEditHours() {
+  const id = parseInt(document.getElementById('edit-hours-id').value);
+  const idx = appData.hoursSubmissions.findIndex(x=>x.id===id);
+  if(idx===-1) return;
+  const updated = { ...appData.hoursSubmissions[idx], name: document.getElementById('edit-h-name').value, date: document.getElementById('edit-h-date').value, miles: parseFloat(document.getElementById('edit-h-miles').value)||0 };
+  ['rescue-standby','rescue-ops','meeting','team-training','hoist','other-training','inter-unit','admin','equipment','fitness','fundraising','range','other'].forEach(k => {
+    const key = k.replace(/-([a-z])/g, (_,c)=>c.toUpperCase());
+    const el = document.getElementById('edit-h-'+k);
+    if(el) updated[key] = parseFloat(el.value)||0;
+  });
+  appData.hoursSubmissions[idx] = updated;
+  saveData(appData); closeModal('modal-edit-hours'); renderHoursSubmissions();
+  showToast('✅ Submission updated!');
+}
+function deleteHoursSub(id) {
+  if(!confirm('Delete this submission?')) return;
+  appData.hoursSubmissions = appData.hoursSubmissions.filter(s=>s.id!==id);
+  saveData(appData); renderHoursSubmissions();
+}
+function renderShiftsList() {
+  const el = document.getElementById('shifts-list');
+  if(!appData.shifts.length) { el.innerHTML = '<p style="color:var(--gray);font-size:.9rem">No shifts logged yet.</p>'; return; }
+  el.innerHTML = [...appData.shifts].reverse().map(s => `
+    <div class="mission-item">
+      <div class="mission-item-info">
+        <h4>${formatDate(s.date)} — ${s.vehicle||'No vehicle'}</h4>
+        <p>Pilot: ${s.pilot||'—'} | CC: ${s.crewChief||'—'} | AM: ${[s.am1,s.am2,s.am3].filter(Boolean).join(', ')} ${s.hasMission?'| Mission: '+s.missionType:'| No mission'}</p>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="btn btn-secondary btn-sm" onclick="openEditShift(${s.id})">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteShift(${s.id})">Delete</button>
+      </div>
+    </div>`).join('');
+}
+function deleteShift(id) {
+  if(!confirm('Delete this shift?')) return;
+  appData.shifts = appData.shifts.filter(s=>s.id!==id);
+  saveData(appData); renderShiftsList(); renderMissions();
+}
+function clearHours() { appData.hoursSubmissions=[]; saveData(appData); renderHoursSubmissions(); showToast('Hours data cleared.'); }
+function clearShifts() { appData.shifts=[]; saveData(appData); renderShiftsList(); showToast('Shift data cleared.'); }
+
+function openEditShift(id) {
+  const s = appData.shifts.find(x=>x.id===id);
+  if(!s) return;
+  document.getElementById('edit-shift-id').value = id;
+  document.getElementById('edit-s-date').value = s.date||'';
+  document.getElementById('edit-s-vehicle').value = s.vehicle||'';
+  document.getElementById('edit-s-pilot').value = s.pilot||'';
+  document.getElementById('edit-s-crewchief').value = s.crewChief||'';
+  document.getElementById('edit-s-am1').value = s.am1||'';
+  document.getElementById('edit-s-am2').value = s.am2||'';
+  document.getElementById('edit-s-am3').value = s.am3||'';
+  document.getElementById('edit-s-other-medic').value = s.otherMedic||'';
+  document.getElementById('edit-s-dispatch-time').value = s.dispatchTime||'';
+  document.getElementById('edit-s-incident').value = s.incidentNumber||'';
+  document.getElementById('edit-s-has-mission').checked = s.hasMission||false;
+  document.getElementById('edit-s-mission-type').value = s.missionType||'';
+  document.getElementById('edit-s-location').value = s.mission?.location||'';
+  document.getElementById('edit-s-disposition').value = s.mission?.disposition||'';
+  document.getElementById('edit-s-description').value = s.mission?.description||'';
+  openModal('modal-edit-shift');
+}
+function saveEditShift() {
+  const id = parseInt(document.getElementById('edit-shift-id').value);
+  const idx = appData.shifts.findIndex(x=>x.id===id);
+  if(idx===-1) return;
+  const hasMission = document.getElementById('edit-s-has-mission').checked;
+  const missionType = document.getElementById('edit-s-mission-type').value;
+  const updated = {
+    ...appData.shifts[idx],
+    date: document.getElementById('edit-s-date').value,
+    vehicle: document.getElementById('edit-s-vehicle').value,
+    pilot: document.getElementById('edit-s-pilot').value,
+    crewChief: document.getElementById('edit-s-crewchief').value,
+    am1: document.getElementById('edit-s-am1').value,
+    am2: document.getElementById('edit-s-am2').value,
+    am3: document.getElementById('edit-s-am3').value,
+    otherMedic: document.getElementById('edit-s-other-medic').value,
+    incidentNumber: document.getElementById('edit-s-incident').value,
+    dispatchTime: document.getElementById('edit-s-dispatch-time').value,
+    hasMission,
+    missionType: hasMission ? missionType : '',
+    mission: hasMission ? {
+      location: document.getElementById('edit-s-location').value,
+      disposition: document.getElementById('edit-s-disposition').value,
+      description: document.getElementById('edit-s-description').value,
+    } : {}
+  };
+  appData.shifts[idx] = updated;
+  saveData(appData); closeModal('modal-edit-shift'); renderShiftsList(); renderMissions();
+  showToast('✅ Shift updated!');
+}
+
+// ============================================================
+// REPORT BUILDER (shared by secretary + public view)
+// ============================================================
+
+
+// ============================================================
+// SYNC ALL MONTHS TO GOOGLE SHEETS
+// Writes data rows only into a pre-formatted template sheet.
+// Tab names: "Jan", "Feb", ..., "Dec"  (YTD tab is never touched)
+// Layout: Row 1 = title, Row 2 = headers, Rows 3+ = data
+// Columns: A=Name, B=POV Miles, C=Rescue Standby, D=Rescue Ops,
+//          E=Unit Meeting, F=Team Training, G=Hoist Currency,
+//          H=Other Training, I=Inter-Unit Support, J=Admin,
+//          K=Equipment, L=Fitness, M=Fund Raising/PR, N=Range,
+//          O=Other Hours, P=Total Hours, Q=Status
+// ============================================================
+async function syncAllMonthsToSheets() {
+  if (!isGoogleConnected()) {
+    showAlert('Please connect your Google account first.\n\nGo to the Google Account section above and click "Connect Google Account".');
+    return;
+  }
+  if (!hoursSheetId) {
+    showAlert('No Google Sheet linked yet.\n\nPaste your Sheet ID into the field above and click Save.');
+    return;
+  }
+
+  const year = parseInt(document.getElementById('report-year').value) || new Date().getFullYear();
+  sortRosterByLastName();
+  const roster = appData.roster;
+  const TAB_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const statusLabel = { active:'Active', loa:'LOA', trainee:'Trainee', support:'Support' };
+
+  // Helper: build the data rows for one month
+  function buildMonthRows(monthIdx) {
+    const monthStr = `${year}-${String(monthIdx+1).padStart(2,'0')}`;
+    const subs = appData.hoursSubmissions.filter(s => s.date && s.date.startsWith(monthStr));
+    return roster.map(member => {
+      const entries = subs.filter(s => s.name === member.name);
+      const sum = k => entries.reduce((a, s) => a + (parseFloat(s[k]) || 0), 0);
+      const standby     = sum('rescueStandby');
+      const ops         = sum('rescueOps');
+      const meeting     = sum('meeting');
+      const teamTrain   = sum('teamTraining');
+      const hoist       = sum('hoist');
+      const otherTrain  = sum('otherTraining');
+      const interUnit   = sum('interUnit');
+      const admin       = sum('admin');
+      const equip       = sum('equipment');
+      const fitness     = sum('fitness');
+      const fundraising = sum('fundraising');
+      const range       = sum('range');
+      const other       = sum('other');
+      const miles       = sum('miles');
+      const total       = standby+ops+meeting+teamTrain+hoist+otherTrain+interUnit+admin+equip+fitness+fundraising+range+other;
+      // Status (col Q) is left blank — it's filled in manually per month so each
+      // month can track member status independently.
+      return [member.name, miles, standby, ops, meeting, teamTrain, hoist, otherTrain,
+              interUnit, admin, equip, fitness, fundraising, range, other, total, ''];
+    });
+  }
+
+  // Update the sync button to show progress
+  const syncBtn = document.getElementById('btn-sync-sheets');
+  const originalLabel = syncBtn ? syncBtn.textContent : '';
+  function setProgress(msg) {
+    if (syncBtn) syncBtn.textContent = msg;
+    showToast(msg);
+  }
+
+  try {
+    setProgress('⏳ Syncing Jan...');
+
+    for (let m = 0; m < 12; m++) {
+      const tabName = TAB_ABBR[m];
+      setProgress(`⏳ Syncing ${tabName}...`);
+
+      const rows = buildMonthRows(m);
+
+      // Clear existing data rows (row 3 onward, cols A–Q)
+      // Using A3:Q1000 to wipe any previous export without touching title/header rows
+      const clearRange = encodeURIComponent(`${tabName}!A3:Q1000`);
+      const clearResp = await fetch(
+        `https://sheets.googleapis.com/v4/spreadsheets/${hoursSheetId}/values/${clearRange}:clear`,
+        { method: 'POST', headers: { 'Authorization': 'Bearer ' + googleAccessToken, 'Content-Type': 'application/json' } }
+      );
+      if (!clearResp.ok) {
+        const err = await clearResp.json();
+        throw new Error(`Clear failed for tab "${tabName}": ${err.error?.message || clearResp.status}`);
+      }
+
+      // Write fresh data rows starting at A3
+      const writeRange = encodeURIComponent(`${tabName}!A3`);
+      const writeResp = await fetch(
+        `https://sheets.googleapis.com/v4/spreadsheets/${hoursSheetId}/values/${writeRange}?valueInputOption=RAW`,
+        {
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + googleAccessToken, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ values: rows })
+        }
+      );
+      if (!writeResp.ok) {
+        const err = await writeResp.json();
+        throw new Error(`Write failed for tab "${tabName}": ${err.error?.message || writeResp.status}`);
+      }
+    }
+
+    // Rebuild the YTD tab's lookup formulas from the freshly-synced monthly tabs
+    setProgress('⏳ Updating YTD totals...');
+    await syncYTDFormulas(roster, year);
+
+    // Sync mission recap tabs ("Jan Recap" … "Dec Recap")
+    setProgress('⏳ Syncing Recap tabs...');
+    await syncRecapTabs(roster, year);
+
+    if (syncBtn) syncBtn.textContent = originalLabel;
+    showToast('✅ All months + YTD synced to Google Sheets!');
+
+  } catch (e) {
+    if (syncBtn) syncBtn.textContent = originalLabel;
+    console.error('Sync error:', e);
+    showAlert('Sync failed: ' + e.message + '\n\nMake sure:\n• Your Sheet ID is correct\n• Tab names match exactly (Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec)\n• Your Google account is still connected');
+  }
+}
+
+// ============================================================
+// RECAP TABS — writes leadership, roster count, and mission
+// stats into the pre-formatted "Jan Recap" … "Dec Recap" tabs.
+// Only specific cells are touched; everything else is left alone.
+// Cells written per tab:
+//   B6  = Secretary (Preparer)
+//   B7  = Total Unit Members
+//   B20 = Team Commander
+//   B22 = Secretary
+//   B24 = Team Coordinator
+//   B26 = Assistant Coordinator
+//   C12 = Total Missions
+//   C13 = Hoist Missions
+//   C14 = Patient Contacts (any disposition starting with "Patient")
+//   C15 = Patients Transported (disposition = "Patient Treated and Transported by Air Rescue" only)
+//   C16 = Public Assist Victims
+//   C17 = Other Missions
+//   C18 = Cancelled Calls
+// ============================================================
+async function syncRecapTabs(roster, year) {
+  const TAB_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const ldr = appData.leadership || {};
+
+  for (let m = 0; m < 12; m++) {
+    const tabName = TAB_ABBR[m] + ' Recap';
+    const monthStr = `${year}-${String(m + 1).padStart(2, '0')}`;
+
+    // Calculate mission stats for this month
+    const allShifts = appData.shifts.filter(s => s.date && s.date.startsWith(monthStr));
+    const missions        = allShifts.filter(s => s.hasMission);
+    const hoistMissions   = missions.filter(s => s.mission?.rescueType === 'Hoist');
+    const transported     = missions.filter(s => s.mission?.disposition === 'Patient Treated and Transported by Air Rescue');
+    const patientContacts = missions.filter(s => s.mission?.disposition && s.mission.disposition.startsWith('Patient'));
+    const publicAssist    = missions.filter(s => s.mission?.disposition && s.mission.disposition.includes('Public Assist'));
+    const cancelled       = missions.filter(s => s.mission?.disposition === 'Cancelled');
+    const otherMissions   = missions.filter(s => s.missionType !== 'Rescue' && s.missionType !== 'Scene Call' && s.missionType !== 'Inter-facility (IFT)');
+
+    // Build a batchUpdate data array using individual cell ranges
+    const cellWrites = [
+      { range: `${tabName}!B6`,  values: [[ldr.secretary       || '']] },
+      { range: `${tabName}!B7`,  values: [[roster.length]]             },
+      { range: `${tabName}!B20`, values: [[ldr.commander       || '']] },
+      { range: `${tabName}!B22`, values: [[ldr.secretary       || '']] },
+      { range: `${tabName}!B24`, values: [[ldr.coordinator     || '']] },
+      { range: `${tabName}!B26`, values: [[ldr.asstCoordinator || '']] },
+      { range: `${tabName}!C12`, values: [[missions.length]]           },
+      { range: `${tabName}!C13`, values: [[hoistMissions.length]]      },
+      { range: `${tabName}!C14`, values: [[patientContacts.length]]    }, // any Patient disposition
+      { range: `${tabName}!C15`, values: [[transported.length]]        }, // air rescue transport only
+      { range: `${tabName}!C16`, values: [[publicAssist.length]]       },
+      { range: `${tabName}!C17`, values: [[otherMissions.length]]      },
+      { range: `${tabName}!C18`, values: [[cancelled.length]]          },
+    ];
+
+    const writeResp = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${hoursSheetId}/values:batchUpdate`,
+      {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + googleAccessToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ valueInputOption: 'RAW', data: cellWrites })
+      }
+    );
+    if (!writeResp.ok) {
+      const err = await writeResp.json();
+      throw new Error(`Recap sync failed for tab "${tabName}": ${err.error?.message || writeResp.status}`);
+    }
+  }
+}
+
+// ============================================================
+// YTD TAB — same columns as the monthly tabs (Row 2: A=Name …
+// P=Total Hours, Q=Status). Each category cell (B..O) sums that
+// member's value for that category across all 12 monthly tabs
+// (VLOOKUP on rows 3+), and P sums the hour categories C..O.
+// Auto-detects a tab named like "YTD" or "...Totals"; if none
+// exists, creates a tab called "YTD". Values are cleared first
+// (cell formatting is preserved by the Sheets API).
+// ============================================================
+async function syncYTDFormulas(roster, year) {
+  const TABS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  // Find (or create) the YTD tab
+  const metaResp = await fetch(
+    `https://sheets.googleapis.com/v4/spreadsheets/${hoursSheetId}`,
+    { headers: { 'Authorization': 'Bearer ' + googleAccessToken } }
+  );
+  if (!metaResp.ok) {
+    const err = await metaResp.json();
+    throw new Error(`Could not read spreadsheet for YTD update: ${err.error?.message || metaResp.status}`);
+  }
+  const meta = await metaResp.json();
+  const titles = meta.sheets.map(s => s.properties.title);
+  const idByTitle = {};
+  meta.sheets.forEach(s => { idByTitle[s.properties.title] = s.properties.sheetId; });
+  let ytdName = titles.find(t => /ytd/i.test(t)) || titles.find(t => /totals?/i.test(t));
+  let ytdSheetId = ytdName ? idByTitle[ytdName] : null;
+
+  if (!ytdName) {
+    ytdName = 'YTD';
+    const addResp = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${hoursSheetId}:batchUpdate`,
+      { method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + googleAccessToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requests: [{ addSheet: { properties: { title: ytdName } } }] }) }
+    );
+    if (!addResp.ok) {
+      const err = await addResp.json();
+      throw new Error(`Could not create YTD tab: ${err.error?.message || addResp.status}`);
+    }
+    const addJson = await addResp.json();
+    ytdSheetId = addJson.replies?.[0]?.addSheet?.properties?.sheetId ?? null;
+  }
+
+  // Clear existing values from row 3 down — rows 1 and 2 are left untouched
+  const clearRange = encodeURIComponent(`${ytdName}!A3:Q1000`);
+  const clearResp = await fetch(
+    `https://sheets.googleapis.com/v4/spreadsheets/${hoursSheetId}/values/${clearRange}:clear`,
+    { method: 'POST', headers: { 'Authorization': 'Bearer ' + googleAccessToken, 'Content-Type': 'application/json' } }
+  );
+  if (!clearResp.ok) {
+    const err = await clearResp.json();
+    throw new Error(`Could not clear YTD tab "${ytdName}": ${err.error?.message || clearResp.status}`);
+  }
+
+  // Build one row per member (data starts at row 3 — rows 1 and 2 are manually managed).
+  const yr = year || new Date().getFullYear();
+
+  const dataRows = roster.map((member, i) => {
+    const r = i + 3; // 1-indexed sheet row
+    // For each category column B..O (VLOOKUP column index 2..15), sum that member's
+    // value for that category across all 12 monthly tabs. IFERROR -> 0 when not found.
+    const catCells = [];
+    for (let colIdx = 2; colIdx <= 15; colIdx++) {            // B(2) … O(15)
+      const terms = TABS.map(tab =>
+        `IFERROR(VLOOKUP($A${r},'${tab}'!$A$3:$Q,${colIdx},FALSE),0)`
+      );
+      catCells.push('=' + terms.join('+'));
+    }
+    // P = Total Hours = sum of the hour categories C..O (POV Miles in col B is excluded).
+    const totalHours = `=SUM(C${r}:O${r})`;
+    // Status (col Q) left blank — filled in manually so it can differ per period.
+    return [member.name, ...catCells, totalHours, ''];          // A + B..O + P + Q = 17 cols
+  });
+
+  const writeResp = await fetch(
+    `https://sheets.googleapis.com/v4/spreadsheets/${hoursSheetId}/values/${encodeURIComponent(ytdName + '!A3')}?valueInputOption=USER_ENTERED`,
+    { method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + googleAccessToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ values: [...dataRows] }) }
+  );
+  if (!writeResp.ok) {
+    const err = await writeResp.json();
+    throw new Error(`Could not write YTD formulas to "${ytdName}": ${err.error?.message || writeResp.status}`);
+  }
+
+  // Match the YTD tab's look to the monthly tabs by copying their formatting.
+  const sourceMonth = TABS.find(t => idByTitle[t] != null);
+  if (sourceMonth != null && ytdSheetId != null) {
+    try {
+      await matchYTDFormatting(ytdSheetId, idByTitle[sourceMonth], sourceMonth, roster.length);
+    } catch (fmtErr) {
+      // Formatting is cosmetic — don't fail the whole sync if it doesn't take.
+      console.warn('YTD formatting step skipped:', fmtErr);
+    }
+  }
+}
+
+// ============================================================
+// Copy the title row, rotated category header, column tints,
+// borders, column widths, row heights, frozen panes, and the
+// merged title cell from a monthly tab onto the YTD tab so the
+// two visually match. Cell look is copied via PASTE_FORMAT;
+// dimensions/merges/freezes are applied explicitly.
+// ============================================================
+async function matchYTDFormatting(ytdSheetId, srcSheetId, srcName, memberCount) {
+  const NUM_COLS = 17; // A..Q
+
+  // Read the source month's row heights (rows 1–2) and column widths (A..Q)
+  const dimResp = await fetch(
+    `https://sheets.googleapis.com/v4/spreadsheets/${hoursSheetId}` +
+    `?ranges=${encodeURIComponent(srcName + '!A1:Q3')}&includeGridData=true` +
+    `&fields=${encodeURIComponent('sheets(data(rowMetadata(pixelSize),columnMetadata(pixelSize)))')}`,
+    { headers: { 'Authorization': 'Bearer ' + googleAccessToken } }
+  );
+  let rowPx = [], colPx = [];
+  if (dimResp.ok) {
+    const dim = await dimResp.json();
+    const d = dim.sheets?.[0]?.data?.[0] || {};
+    rowPx = (d.rowMetadata || []).map(r => r.pixelSize);
+    colPx = (d.columnMetadata || []).map(c => c.pixelSize);
+  }
+
+  const requests = [];
+
+  // Freeze the title+header rows and the name column, like the monthly tabs
+  requests.push({ updateSheetProperties: {
+    properties: { sheetId: ytdSheetId, gridProperties: { frozenRowCount: 2, frozenColumnCount: 1 } },
+    fields: 'gridProperties(frozenRowCount,frozenColumnCount)' } });
+
+  // Copy the data-row look (tints/borders from source row 3) down across all members
+  if (memberCount > 0) {
+    requests.push({ copyPaste: {
+      source:      { sheetId: srcSheetId, startRowIndex: 2, endRowIndex: 3, startColumnIndex: 0, endColumnIndex: NUM_COLS },
+      destination: { sheetId: ytdSheetId, startRowIndex: 2, endRowIndex: 2 + memberCount, startColumnIndex: 0, endColumnIndex: NUM_COLS },
+      pasteType: 'PASTE_FORMAT' } });
+  }
+
+  // Column widths A..Q
+  colPx.forEach((px, idx) => {
+    if (px) requests.push({ updateDimensionProperties: {
+      range: { sheetId: ytdSheetId, dimension: 'COLUMNS', startIndex: idx, endIndex: idx + 1 }, properties: { pixelSize: px }, fields: 'pixelSize' } });
+  });
+
+  if (requests.length) {
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${hoursSheetId}:batchUpdate`, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + googleAccessToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ requests })
+    });
+  }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+  sortRosterByLastName();
+  saveData(appData);
+  document.getElementById('shift-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('hours-date').value = new Date().toISOString().split('T')[0];
+  // Populate Sheet ID input if already saved
+  const sheetInput = document.getElementById('hours-sheet-id-input');
+  if (sheetInput && hoursSheetId) {
+    sheetInput.value = hoursSheetId;
+    const el = document.getElementById('sheet-id-status');
+    if (el) el.textContent = 'Current Sheet ID: ' + hoursSheetId;
+  }
+  populateRosterSelects();
+  populateHoursSelect();
+  updateTotals();
+  updateGoogleStatus();
+  document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); });
+  });
+});
+</script>
+</body>
+</html>
